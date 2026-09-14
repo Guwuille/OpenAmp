@@ -48,6 +48,10 @@
   border-bottom: 0;
 }
 
+/* El mini reproductor se estira a lo ancho y nada mas: el alto lo fija el
+   proceso principal al alto exacto del contenido, asi no puede quedar el
+   hueco negro que aparecia al agrandar la ventana de mas. Lo que se adapta
+   al ancho es la marquesina, que es lo que gana con el espacio. */
 #app-shell.mini-mode #display-row {
   gap: 5px;
   align-items: center;
@@ -57,11 +61,13 @@
 #app-shell.mini-mode #album-art {
   width: 34px;
   height: 34px;
+  flex: 0 0 auto;
 }
 
 #app-shell.mini-mode #visualizer-wrap {
   width: 58px;
   height: 26px;
+  flex: 0 0 auto;
 }
 
 #app-shell.mini-mode #display-info {

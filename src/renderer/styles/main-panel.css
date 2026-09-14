@@ -56,20 +56,49 @@
 }
 
 /* Caratula agrandada: ocupa el alto que sobre en el panel, asi se ajusta
-   redimensionando la ventana en vez de quedar clavada en un alto fijo. */
-#app-shell.albumart-maximized #panel-main,
-#app-shell.albumart-maximized #display-row {
+   redimensionando la ventana en vez de quedar clavada en un alto fijo.
+   La fila pasa a columna: apilada, la caratula puede recibir el alto sobrante
+   con flex. En fila con height:auto tomaba el ancho del panel y deducia el
+   alto de la proporcion de la imagen, y terminaba mas alta que la ventana. */
+#app-shell.albumart-maximized #panel-main {
   flex: 1;
   min-height: 0;
 }
 
+#app-shell.albumart-maximized #display-row {
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+/* Caja cuadrada y centrada: la portada es cuadrada, asi que estirar la caja a
+   todo el ancho solo agrega franjas negras a los lados. Con aspect-ratio el
+   ancho lo deduce del alto sobrante, y max-width la frena si la ventana es
+   mas ancha que alta. */
 #display-row.albumart-maximized #album-art {
   order: -1;
-  width: 100%;
-  flex: 1 1 auto;
-  flex-basis: 100%;
+  /* base 0: el alto sale del espacio sobrante, no del contenido */
+  flex: 1 1 0;
+  min-height: 0;
   height: auto;
-  min-height: 120px;
+  width: auto;
+  aspect-ratio: 1;
+  max-width: 100%;
+  align-self: center;
+}
+
+/* En columna, el flex:1 que display-info usa para repartir el ancho pasa a
+   repartir el alto y se queda con el espacio que deberia ir a la caratula.
+   Aca ambos van a su alto natural y lo que sobra es para la portada. */
+#display-row.albumart-maximized #display-info,
+#display-row.albumart-maximized #visualizer-wrap {
+  flex: 0 0 auto;
+}
+
+#display-row.albumart-maximized #album-art img {
+  width: 100%;
+  height: 100%;
 }
 
 #display-row.albumart-maximized #album-art img {

@@ -5,6 +5,8 @@ const NORMAL_MIN_WIDTH = 660;
 const NORMAL_MIN_HEIGHT = 380;
 const MINI_MIN_WIDTH = 240;
 const MINI_MIN_HEIGHT = 64;
+// setMaximumSize necesita un numero concreto; este es el "sin tope" practico.
+const UNLIMITED = 100000;
 
 function registerWindowIpc(getMainWindow) {
   // Lo que habia antes de encoger, para poder devolver la ventana tal cual
@@ -26,16 +28,17 @@ function registerWindowIpc(getMainWindow) {
       if (win.isFullScreen()) win.setFullScreen(false);
       if (win.isMaximized()) win.unmaximize();
 
-      // El minimo se baja a un piso generoso, no al tamano exacto pedido: si
-      // el minimo fuera el tamano actual, la ventana quedaria clavada y no se
-      // podria agrandar ni achicar a mano.
-      win.setMinimumSize(MINI_MIN_WIDTH, MINI_MIN_HEIGHT);
-
       // Sin ancho explicito se conserva el que tenga la ventana: asi cambiar
       // una opcion no descarta el ancho que el usuario haya elegido.
       const [currentWidth] = win.getSize();
       const w = Math.max(MINI_MIN_WIDTH, Math.round(width || currentWidth));
       const h = Math.max(MINI_MIN_HEIGHT, Math.round(height || 120));
+
+      // El alto queda clavado al del contenido y solo el ancho es libre. Si se
+      // pudiera estirar en vertical aparecia una franja negra debajo de los
+      // controles, porque el mini reproductor no tiene con que llenarla.
+      win.setMinimumSize(MINI_MIN_WIDTH, h);
+      win.setMaximumSize(UNLIMITED, h);
       win.setSize(w, h, false);
       // Un mini reproductor tapado por otra ventana no sirve de nada.
       win.setAlwaysOnTop(true);
@@ -45,6 +48,8 @@ function registerWindowIpc(getMainWindow) {
     const previous = beforeMini;
     beforeMini = null;
     win.setMinimumSize(NORMAL_MIN_WIDTH, NORMAL_MIN_HEIGHT);
+    // Sacar el tope de alto que el mini reproductor habia impuesto.
+    win.setMaximumSize(UNLIMITED, UNLIMITED);
     if (previous) {
       win.setBounds(previous.bounds);
       win.setAlwaysOnTop(previous.alwaysOnTop);
