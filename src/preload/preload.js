@@ -47,6 +47,14 @@ contextBridge.exposeInMainWorld('api', {
     setState: (state) => ipcRenderer.invoke('player:setState', state),
     onCommand: (cb) => on('player:command', cb)
   },
+  downloads: {
+    start: (options) => ipcRenderer.invoke('downloads:start', options),
+    cancel: (id) => ipcRenderer.invoke('downloads:cancel', id),
+    onProgress: (cb) => on('downloads:progress', cb),
+    onDone: (cb) => on('downloads:done', cb),
+    onError: (cb) => on('downloads:error', cb),
+    onCancelled: (cb) => on('downloads:cancelled', cb)
+  },
   settings: {
     get: (key) => ipcRenderer.invoke('settings:get', key),
     set: (key, value) => ipcRenderer.invoke('settings:set', { key, value })

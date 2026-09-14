@@ -8,6 +8,7 @@ const registerDialogsIpc = require('./ipc/dialogs.ipc');
 const registerWindowIpc = require('./ipc/window.ipc');
 const registerLyricsIpc = require('./ipc/lyrics.ipc');
 const registerPlayerIpc = require('./ipc/player.ipc');
+const registerDownloadsIpc = require('./ipc/downloads.ipc');
 const settingsStore = require('./settingsStore');
 
 let mainWindow = null;
@@ -122,6 +123,7 @@ app.whenReady().then(() => {
   registerWindowIpc(() => mainWindow);
   registerLyricsIpc();
   const player = registerPlayerIpc(() => mainWindow);
+  const downloads = registerDownloadsIpc(() => mainWindow);
 
   createWindow();
   createTray();
@@ -133,7 +135,11 @@ app.whenReady().then(() => {
     library.start();
     player.init();
   });
-  app.on('before-quit', () => library.stop());
+  app.on('before-quit', () => {
+    library.stop();
+    // Cortar descargas en curso: si no, quedan archivos .part a medio escribir.
+    downloads.stop();
+  });
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

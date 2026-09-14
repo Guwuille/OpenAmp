@@ -92,6 +92,29 @@ Las tres preferencias se recuerdan entre sesiones. Es el mismo elemento el que
 reproduce y el que muestra la imagen, así que no hay decodificación duplicada
 ni riesgo de que el sonido se desincronice de la imagen.
 
+## Descargar desde una dirección
+
+El botón **URL** de la biblioteca abre un panel donde pegás un **enlace directo
+a un archivo** de audio o video, elegís a qué carpeta de la biblioteca va, y se
+descarga con progreso y opción de cancelar. Como esa carpeta ya está vigilada,
+la pista aparece sola en la lista al terminar.
+
+Qué hace para no romper nada:
+
+- Solo acepta `http` y `https`, y solo contenido que sea audio o video. Un
+  enlace a una página web se rechaza en vez de guardar el HTML como si fuera
+  una canción.
+- Baja con extensión `.part` y renombra al final, así el escáner nunca ve un
+  archivo a medio escribir.
+- Si el nombre ya existe, numera en vez de pisar.
+- El nombre que propone el servidor se limpia de separadores de ruta, así que
+  no puede escribir fuera de la carpeta elegida.
+
+No es un descargador de YouTube ni de otras plataformas de streaming: esos no
+sirven archivos directos y extraer sus streams va contra sus términos. Si ya
+los bajás con otra herramienta, alcanza con dejarlos en una carpeta de la
+biblioteca y aparecen solos.
+
 ## Letras
 
 OpenAmp busca la letra de cada pista en este orden:
