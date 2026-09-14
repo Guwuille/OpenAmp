@@ -21,7 +21,11 @@ Ejecutar de todas formas*.
 
 ## Qué hace
 
-- **Formatos**: FLAC, MP3, WAV y OGG.
+- **Formatos**: FLAC, MP3, WAV, OGG, M4A y Opus. También video: MP4, M4V,
+  WebM y OGV. Ver [Video](#video) para el detalle de códecs.
+- **Video**: si la pista trae imagen, se reproduce de fondo en el visualizador.
+  Las barras se dibujan encima y la letra por delante de todo; cada capa se
+  prende y apaga por separado.
 - **Biblioteca**: escaneo recursivo de carpetas en un *worker thread* (no
   congela la interfaz), metadatos con `music-metadata` y catálogo en SQLite.
   Las carátulas embebidas se extraen y se cachean por hash. Las carpetas
@@ -63,6 +67,30 @@ Ejecutar de todas formas*.
   letra, y la ventana se ajusta de alto a lo que quede. Se entra con su botón
   en la barra de título, y hay una opción para que el botón de minimizar abra
   el mini reproductor en vez de mandar la app a la barra de tareas.
+
+## Video
+
+OpenAmp reproduce lo que Chromium sabe demuxear, porque el motor de video es
+el de Electron:
+
+- **Funcionan**: MP4 y M4V (H.264 + AAC), WebM (VP8/VP9 + Vorbis/Opus) y OGV.
+- **No funcionan**: MKV y AVI. Aunque adentro lleven un H.264 perfectamente
+  reproducible, Chromium no abre esos contenedores. Hay que remuxearlos a MP4,
+  que es una operación sin recodificar y por lo tanto sin pérdida.
+
+Si la pista trae imagen, el video aparece de fondo en el visualizador. El
+visualizador dibuja sobre transparente, así que las barras del espectro se ven
+sobre el video, y la letra sincronizada va por delante de las dos.
+
+En modo visualizador aparecen tres interruptores arriba a la derecha:
+
+- **V** — el video de fondo. Queda deshabilitado si la pista no trae imagen.
+- **B** — las barras del espectro. Apagalas y el video queda limpio.
+- **L** — la letra sincronizada superpuesta.
+
+Las tres preferencias se recuerdan entre sesiones. Es el mismo elemento el que
+reproduce y el que muestra la imagen, así que no hay decodificación duplicada
+ni riesgo de que el sonido se desincronice de la imagen.
 
 ## Letras
 

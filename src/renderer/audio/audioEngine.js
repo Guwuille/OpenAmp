@@ -5,8 +5,15 @@ import { toFileUrl } from '../lib/fileUrl.js';
 export function createAudioEngine() {
   const bus = createEventBus();
 
-  const audioEl = new Audio();
+  // Un <video> tambien reproduce audio, asi que sirve para todo y ademas
+  // permite mostrar la imagen cuando el archivo la trae. La interfaz lo monta
+  // donde corresponda a traves de mediaElement.
+  const audioEl = document.createElement('video');
   audioEl.preload = 'auto';
+  audioEl.playsInline = true;
+  // Sin esto, un video reproducido solo en segundo plano puede quedar sin
+  // decodificar cuadros en algunos casos.
+  audioEl.disablePictureInPicture = true;
 
   const audioContext = new AudioContext();
   const sourceNode = audioContext.createMediaElementSource(audioEl);
@@ -28,7 +35,14 @@ export function createAudioEngine() {
     bus.emit('timeupdate', { currentTime: audioEl.currentTime, duration: audioEl.duration || 0 });
   });
   audioEl.addEventListener('loadedmetadata', () => {
-    bus.emit('loadedmetadata', { duration: audioEl.duration || 0 });
+    // videoWidth es la unica forma fiable de saber si el archivo trae imagen:
+    // la extension miente (un .mp4 puede ser solo audio y un .webm tambien).
+    bus.emit('loadedmetadata', {
+      duration: audioEl.duration || 0,
+      hasVideo: audioEl.videoWidth > 0,
+      videoWidth: audioEl.videoWidth,
+      videoHeight: audioEl.videoHeight
+    });
   });
   audioEl.addEventListener('ended', () => bus.emit('ended'));
   audioEl.addEventListener('play', () => bus.emit('play'));
@@ -42,6 +56,15 @@ export function createAudioEngine() {
   return {
     analyserNode,
     on: bus.on,
+
+    // La interfaz lo inserta detras del visualizador para que el video se vea
+    // como fondo. Es el mismo elemento que reproduce: no hay decodificacion
+    // duplicada ni riesgo de que imagen y sonido se desincronicen.
+    mediaElement: audioEl,
+
+    hasVideo() {
+      return audioEl.videoWidth > 0;
+    },
 
     loadTrack(filePath) {
       return new Promise((resolve, reject) => {

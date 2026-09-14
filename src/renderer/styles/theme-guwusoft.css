@@ -330,9 +330,15 @@ body::after {
   filter: sepia(.45) contrast(1.08) brightness(.85) saturate(.7);
 }
 
-#visualizer {
+/* El fondo y el borde van en el contenedor, no en el canvas: el canvas tiene
+   que quedar transparente para que se vea el video que lleva detras. */
+#visualizer-wrap {
   background: var(--crt-deep);
   border: 1px solid #0f3a0f;
+}
+
+#visualizer {
+  background: transparent;
   image-rendering: pixelated;
 }
 

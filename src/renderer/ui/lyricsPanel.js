@@ -129,7 +129,8 @@ export function initLyricsPanel({ audioEngine }) {
   // La superposicion solo tiene sentido en modo visualizador y con letra
   // sincronizada; sin tiempos no habria linea que destacar.
   function syncOverlayVisibility() {
-    const show = store.getState().visualizerMode && doc.synced;
+    const state = store.getState();
+    const show = state.visualizerMode && doc.synced && state.stage.lyrics;
     overlay.classList.toggle('hidden', !show);
   }
 

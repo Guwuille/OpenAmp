@@ -43,7 +43,9 @@ async function loadAndPlayCurrent() {
   const track = queue[trackIndex];
   if (!track) return;
 
-  store.setState({ currentTrack: track, currentTime: 0 });
+  // hasVideo se reinicia aca y lo vuelve a decidir loadedmetadata: si no, una
+  // pista de audio heredaria la capa de video de la anterior hasta cargarse.
+  store.setState({ currentTrack: track, currentTime: 0, hasVideo: false });
   try {
     await audioEngine.loadTrack(track.file_path);
     await audioEngine.play();
@@ -134,8 +136,8 @@ const playback = {
 audioEngine.on('timeupdate', ({ currentTime, duration }) => {
   store.setState({ currentTime, duration });
 });
-audioEngine.on('loadedmetadata', ({ duration }) => {
-  store.setState({ duration });
+audioEngine.on('loadedmetadata', ({ duration, hasVideo }) => {
+  store.setState({ duration, hasVideo: Boolean(hasVideo) });
 });
 audioEngine.on('play', () => store.setState({ isPlaying: true }));
 audioEngine.on('pause', () => store.setState({ isPlaying: false }));
@@ -169,7 +171,11 @@ async function bootstrap() {
   visualizer.start();
   document.getElementById('visualizer').addEventListener('click', () => visualizer.toggleMode());
 
-  const mainPanelApi = initMainPanel({ playback, visualizer });
+  const mainPanelApi = initMainPanel({
+    playback,
+    visualizer,
+    mediaElement: audioEngine.mediaElement
+  });
 
   miniPlayer = initMiniPlayer({
     exitVisualizerMode: () => mainPanelApi.exitVisualizerMode()

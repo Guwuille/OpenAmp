@@ -14,7 +14,11 @@ function registerDialogsIpc() {
     const win = BrowserWindow.fromWebContents(event.sender);
     const result = await dialog.showOpenDialog(win, {
       properties: ['openFile', 'multiSelections'],
-      filters: [{ name: 'Audio', extensions: ['flac', 'mp3', 'wav', 'ogg'] }]
+      filters: [
+        { name: 'Musica y video', extensions: ['flac', 'mp3', 'wav', 'ogg', 'm4a', 'opus', 'mp4', 'm4v', 'webm', 'ogv'] },
+        { name: 'Audio', extensions: ['flac', 'mp3', 'wav', 'ogg', 'm4a', 'opus'] },
+        { name: 'Video', extensions: ['mp4', 'm4v', 'webm', 'ogv'] }
+      ]
     });
     if (result.canceled) return [];
     return result.filePaths;

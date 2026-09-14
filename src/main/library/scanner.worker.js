@@ -3,7 +3,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 
-const AUDIO_EXTENSIONS = new Set(['.flac', '.mp3', '.wav', '.ogg']);
+// Los de video son los que Chromium sabe demuxear: mkv y avi quedan afuera
+// aunque adentro lleven un H.264 perfectamente reproducible.
+const AUDIO_EXTENSIONS = new Set([
+  '.flac', '.mp3', '.wav', '.ogg', '.m4a', '.opus',
+  '.mp4', '.m4v', '.webm', '.ogv'
+]);
 
 function saveCoverIfNeeded(picture, coversDir) {
   if (!picture || !picture.data || picture.data.length === 0) return null;

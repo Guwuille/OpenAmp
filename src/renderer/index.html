@@ -78,6 +78,7 @@
               <button id="btn-albumart-max" title="Agrandar caratula">&#9635;</button>
             </div>
             <div id="visualizer-wrap">
+              <div id="video-layer"></div>
               <canvas id="visualizer" width="76" height="32"></canvas>
               <div id="lyrics-overlay" class="hidden">
                 <div id="lyrics-overlay-prev"></div>
@@ -85,6 +86,9 @@
                 <div id="lyrics-overlay-next"></div>
               </div>
               <div id="visualizer-tools">
+                <button id="btn-stage-video" class="stage-only" title="Mostrar el video de fondo">V</button>
+                <button id="btn-stage-bars" class="stage-only" title="Mostrar el visualizador">B</button>
+                <button id="btn-stage-lyrics" class="stage-only" title="Mostrar la letra">L</button>
                 <button id="btn-visualizer-mode" title="Barras / osciloscopio">&#9776;</button>
                 <button id="btn-visualizer-fullscreen" title="Pantalla completa del monitor">&#9974;</button>
                 <button id="btn-visualizer-max" title="Modo visualizador">&#9635;</button>

@@ -1,7 +1,12 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const AUDIO_EXTENSIONS = new Set(['.flac', '.mp3', '.wav', '.ogg']);
+// Tiene que coincidir con lo que acepta el escaner, o se vigilarian cambios
+// que el escaneo despues ignora (o al reves).
+const AUDIO_EXTENSIONS = new Set([
+  '.flac', '.mp3', '.wav', '.ogg', '.m4a', '.opus',
+  '.mp4', '.m4v', '.webm', '.ogv'
+]);
 
 // Copiar musica dispara muchos eventos seguidos (y archivos a medio escribir),
 // asi que se espera a que se calme antes de reescanear.

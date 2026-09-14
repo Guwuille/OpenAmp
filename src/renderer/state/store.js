@@ -23,6 +23,9 @@ const state = {
   lyricsAutoFetch: true,
   visualizerMode: false,
   visualizerFullscreen: false,
+  // Capas del visualizador: video de fondo, barras encima y letra encima.
+  stage: { video: true, visualizer: true, lyrics: true },
+  hasVideo: false,
   miniMode: false,
   miniOptions: { visualizer: true, art: true, lyrics: false },
   minimizeToMini: false,

@@ -3,7 +3,7 @@ import { formatTime } from '../lib/formatTime.js';
 import { createMarquee } from './bitmapText.js';
 import { toFileUrl } from '../lib/fileUrl.js';
 
-export function initMainPanel({ playback, visualizer }) {
+export function initMainPanel({ playback, visualizer, mediaElement }) {
   const playBtn = document.getElementById('btn-play');
   const pauseBtn = document.getElementById('btn-pause');
   const stopBtn = document.getElementById('btn-stop');
@@ -28,9 +28,17 @@ export function initMainPanel({ playback, visualizer }) {
   const maxBtn = document.getElementById('btn-visualizer-max');
   const modeBtn = document.getElementById('btn-visualizer-mode');
   const fullscreenBtn = document.getElementById('btn-visualizer-fullscreen');
+  const videoLayer = document.getElementById('video-layer');
+  const stageVideoBtn = document.getElementById('btn-stage-video');
+  const stageBarsBtn = document.getElementById('btn-stage-bars');
+  const stageLyricsBtn = document.getElementById('btn-stage-lyrics');
   const albumArt = document.getElementById('album-art');
   const albumArtImg = document.getElementById('album-art-img');
   const albumArtMaxBtn = document.getElementById('btn-albumart-max');
+
+  // El elemento que reproduce vive en la capa de fondo del visualizador, asi
+  // que la imagen del video sale del mismo elemento que suena.
+  if (mediaElement) videoLayer.appendChild(mediaElement);
 
   const marquee = createMarquee(document.getElementById('track-marquee'));
   marquee.start();
@@ -101,6 +109,27 @@ export function initMainPanel({ playback, visualizer }) {
     e.stopPropagation();
     const mode = visualizer.toggleMode();
     modeBtn.title = mode === 'bars' ? 'Barras (clic para osciloscopio)' : 'Osciloscopio (clic para barras)';
+  });
+
+  function toggleStage(key) {
+    const stage = { ...store.getState().stage, [key]: !store.getState().stage[key] };
+    store.setState({ stage });
+    window.api.settings.set('stage', stage);
+  }
+
+  stageVideoBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleStage('video');
+  });
+
+  stageBarsBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleStage('visualizer');
+  });
+
+  stageLyricsBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleStage('lyrics');
   });
 
   document.addEventListener('keydown', (e) => {
@@ -179,6 +208,17 @@ export function initMainPanel({ playback, visualizer }) {
     repeatBtn.classList.toggle('active', state.repeat !== 'none');
     repeatBtn.textContent = state.repeat === 'one' ? 'REP1' : 'REP';
 
+    // La capa de video solo se muestra si esta encendida y ademas la pista
+    // trae imagen: un archivo de audio no tiene nada que poner ahi.
+    const showVideo = state.stage.video && state.hasVideo;
+    appShell.classList.toggle('stage-no-video', !showVideo);
+    appShell.classList.toggle('stage-no-visualizer', !state.stage.visualizer);
+    appShell.classList.toggle('has-video', state.hasVideo);
+    stageVideoBtn.classList.toggle('active', state.stage.video);
+    stageVideoBtn.disabled = !state.hasVideo;
+    stageBarsBtn.classList.toggle('active', state.stage.visualizer);
+    stageLyricsBtn.classList.toggle('active', state.stage.lyrics);
+
     eqToggleBtn.classList.toggle('active', state.visiblePanels.equalizer);
     plToggleBtn.classList.toggle('active', state.visiblePanels.playlist);
     lyricsToggleBtn.classList.toggle('active', state.visiblePanels.lyrics);
@@ -216,6 +256,19 @@ export function initMainPanel({ playback, visualizer }) {
 
   store.subscribe(render);
   render();
+
+  (async () => {
+    const saved = await window.api.settings.get('stage');
+    if (saved && typeof saved === 'object') {
+      store.setState({
+        stage: {
+          video: saved.video !== false,
+          visualizer: saved.visualizer !== false,
+          lyrics: saved.lyrics !== false
+        }
+      });
+    }
+  })();
 
   return {
     // Lo usa el mini reproductor: los dos modos se pelean por el tamano de la

@@ -135,6 +135,8 @@
   left: 0;
   right: 0;
   bottom: 0;
+  /* Por delante del video y de las barras. */
+  z-index: 2;
   /* Mucho relleno arriba a proposito: le da recorrido al degradado para
      apagar las barras antes de que empiece el texto. */
   padding: 48px 20px 16px;
