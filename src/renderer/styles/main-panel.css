@@ -158,6 +158,11 @@
   position: absolute;
   top: 1px;
   right: 1px;
+  /* Por encima del canvas y de la letra. Sin esto el canvas, que esta
+     posicionado para dejar el video detras, se queda con los clics: los
+     botones se siguen viendo porque el canvas es transparente, pero no se
+     pueden apretar. */
+  z-index: 3;
   display: flex;
   gap: 1px;
   opacity: 0;
