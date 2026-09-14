@@ -25,11 +25,20 @@ Ejecutar de todas formas*.
 - **Biblioteca**: escaneo recursivo de carpetas en un *worker thread* (no
   congela la interfaz), metadatos con `music-metadata` y catálogo en SQLite.
   Las carátulas embebidas se extraen y se cachean por hash.
+- **Organización**: agrupá por álbum, artista, carpeta, género o año — o sin
+  agrupar — y ordená por número de pista, título, artista, álbum, año,
+  duración o fecha de agregado, en cualquier dirección. La preferencia se
+  recuerda entre sesiones, y reproducir desde la biblioteca encola las pistas
+  en el orden que estás viendo.
 - **Ecualizador**: 10 bandas (60 Hz a 16 kHz) con preamplificador y 8 presets
   — Flat, Rock, Pop, Jazz, Classical, Bass Boost, Treble Boost y Vocal.
 - **Playlists**: varias listas, reordenamiento por *drag and drop*, e
   importación y exportación en M3U.
-- **Visualizador**: barras de espectro y osciloscopio, conmutables.
+- **Visualizador**: barras de espectro y osciloscopio, conmutables. Tiene un
+  modo que le da toda la ventana, ocultando biblioteca, ecualizador y playlist
+  pero dejando a mano la info de la pista y el transporte, y desde ahí se pasa
+  a pantalla completa del monitor. `Escape` sale de pantalla completa primero
+  y del modo después.
 - **Ventana**: sin marco, redimensionable, con *always on top*, icono en la
   bandeja del sistema y modo persiana — doble clic en la barra de título
   colapsa la ventana dejando solo esa barra.
