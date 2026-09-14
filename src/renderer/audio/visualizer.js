@@ -74,10 +74,14 @@ export function createVisualizer(canvas, analyserNode) {
     },
     toggleMode() {
       mode = mode === 'bars' ? 'scope' : 'bars';
+      return mode;
+    },
+    getMode() {
+      return mode;
     },
     resize(width, height) {
-      canvas.width = width;
-      canvas.height = height;
+      canvas.width = Math.max(1, Math.round(width));
+      canvas.height = Math.max(1, Math.round(height));
     }
   };
 }

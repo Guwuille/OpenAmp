@@ -66,38 +66,85 @@
   position: relative;
   flex-shrink: 0;
   order: 2;
+  width: 76px;
+  height: 42px;
 }
 
 #visualizer {
   display: block;
+  width: 100%;
+  height: 100%;
 }
 
-#btn-visualizer-max {
+#visualizer-tools {
   position: absolute;
   top: 1px;
   right: 1px;
-  width: 12px;
-  height: 12px;
-  line-height: 10px;
+  display: flex;
+  gap: 1px;
+  opacity: 0;
+  transition: opacity .12s;
+}
+
+#visualizer-wrap:hover #visualizer-tools,
+#app-shell.visualizer-mode #visualizer-tools {
+  opacity: 0.85;
+}
+
+#visualizer-tools:hover {
+  opacity: 1 !important;
+}
+
+#visualizer-tools button {
+  width: 14px;
+  height: 14px;
   padding: 0;
   font-size: 8px;
-  opacity: 0.75;
+  line-height: 1;
   cursor: pointer;
 }
 
-#btn-visualizer-max:hover {
-  opacity: 1;
+/* ── Modo visualizador: la ventana entera pasa a ser el visualizador ── */
+
+#app-shell.visualizer-mode #library-panel,
+#app-shell.visualizer-mode #panel-equalizer,
+#app-shell.visualizer-mode #panel-playlist {
+  display: none !important;
 }
 
-#display-row.visualizer-maximized #visualizer-wrap {
-  order: 3;
-  width: 100%;
-  flex-basis: 100%;
+#app-shell.visualizer-mode #panel-main {
+  flex: 1;
+  min-height: 0;
 }
 
-#display-row.visualizer-maximized #visualizer {
+#app-shell.visualizer-mode #display-row {
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+#app-shell.visualizer-mode #album-art {
+  display: none;
+}
+
+#app-shell.visualizer-mode #display-info {
+  order: 1;
+  flex: 0 0 auto;
+}
+
+#app-shell.visualizer-mode #visualizer-wrap {
+  order: 2;
+  flex: 1 1 auto;
   width: 100%;
-  height: 140px;
+  height: auto;
+  min-height: 0;
+}
+
+#app-shell.visualizer-mode #visualizer-tools button {
+  width: 22px;
+  height: 20px;
+  font-size: 11px;
 }
 
 #display-info {

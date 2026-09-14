@@ -21,8 +21,11 @@ export function initMainPanel({ playback, visualizer }) {
   const eqPanel = document.getElementById('panel-equalizer');
   const plPanel = document.getElementById('panel-playlist');
   const displayRow = document.getElementById('display-row');
-  const visualizerCanvas = document.getElementById('visualizer');
+  const appShell = document.getElementById('app-shell');
+  const visualizerWrap = document.getElementById('visualizer-wrap');
   const maxBtn = document.getElementById('btn-visualizer-max');
+  const modeBtn = document.getElementById('btn-visualizer-mode');
+  const fullscreenBtn = document.getElementById('btn-visualizer-fullscreen');
   const albumArt = document.getElementById('album-art');
   const albumArtImg = document.getElementById('album-art-img');
   const albumArtMaxBtn = document.getElementById('btn-albumart-max');
@@ -31,19 +34,56 @@ export function initMainPanel({ playback, visualizer }) {
   marquee.start();
 
   let seeking = false;
-  let visualizerMaximized = false;
+  let visualizerMode = false;
+  let fullscreen = false;
   let albumArtMaximized = false;
+
+  // El canvas siempre sigue el tamano real de su contenedor, asi se adapta
+  // solo al entrar en modo visualizador, al pasar a pantalla completa y al
+  // redimensionar la ventana.
+  const resizeObserver = new ResizeObserver(([entry]) => {
+    const { width, height } = entry.contentRect;
+    if (width > 0 && height > 0) visualizer.resize(width, height);
+  });
+  resizeObserver.observe(visualizerWrap);
+
+  function setVisualizerMode(on) {
+    visualizerMode = on;
+    appShell.classList.toggle('visualizer-mode', on);
+    maxBtn.textContent = on ? '▢' : '▣';
+    maxBtn.title = on ? 'Salir del modo visualizador' : 'Modo visualizador';
+  }
+
+  async function setFullscreen(on) {
+    fullscreen = await window.api.window.setFullScreen(on);
+    appShell.classList.toggle('fullscreen', fullscreen);
+    fullscreenBtn.classList.toggle('active', fullscreen);
+    // Pantalla completa sin el modo visualizador no tiene sentido: lo unico
+    // que gana tamano es el visualizador.
+    if (fullscreen && !visualizerMode) setVisualizerMode(true);
+  }
 
   maxBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    visualizerMaximized = !visualizerMaximized;
-    displayRow.classList.toggle('visualizer-maximized', visualizerMaximized);
-    maxBtn.textContent = visualizerMaximized ? '▢' : '▣';
-    if (visualizerMaximized) {
-      visualizer.resize(visualizerCanvas.clientWidth || 400, 140);
-    } else {
-      visualizer.resize(76, 32);
-    }
+    if (visualizerMode && fullscreen) setFullscreen(false);
+    setVisualizerMode(!visualizerMode);
+  });
+
+  fullscreenBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setFullscreen(!fullscreen);
+  });
+
+  modeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const mode = visualizer.toggleMode();
+    modeBtn.title = mode === 'bars' ? 'Barras (clic para osciloscopio)' : 'Osciloscopio (clic para barras)';
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (fullscreen) setFullscreen(false);
+    else if (visualizerMode) setVisualizerMode(false);
   });
 
   albumArtMaxBtn.addEventListener('click', (e) => {

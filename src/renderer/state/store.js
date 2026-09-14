@@ -19,7 +19,10 @@ const state = {
   repeat: 'none',
   eq: { enabled: true, preamp: 0, bands: new Array(10).fill(0), preset: 'Flat' },
   visiblePanels: { playlist: true, equalizer: false },
-  librarySearch: ''
+  librarySearch: '',
+  libraryGroupBy: 'album',
+  librarySortBy: 'track',
+  librarySortDir: 'asc'
 };
 
 function getState() {

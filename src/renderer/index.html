@@ -30,6 +30,32 @@
           <button id="btn-add-folder" title="Agregar carpeta">+ Carpeta</button>
           <button id="btn-open-files" title="Abrir archivos">Abrir</button>
         </div>
+        <div id="library-organize">
+          <div class="organize-row">
+            <label for="library-group">Agrupar</label>
+            <select id="library-group" title="Como agrupar la biblioteca">
+              <option value="album">Album</option>
+              <option value="artist">Artista</option>
+              <option value="folder">Carpeta</option>
+              <option value="genre">Genero</option>
+              <option value="year">Ano</option>
+              <option value="none">Sin agrupar</option>
+            </select>
+          </div>
+          <div class="organize-row">
+            <label for="library-sort">Ordenar</label>
+            <select id="library-sort" title="Criterio de orden">
+              <option value="track">N&deg; de pista</option>
+              <option value="title">Titulo</option>
+              <option value="artist">Artista</option>
+              <option value="album">Album</option>
+              <option value="year">Ano</option>
+              <option value="duration">Duracion</option>
+              <option value="added">Agregado</option>
+            </select>
+            <button id="btn-library-sort-dir" title="Invertir el orden">&#9650;</button>
+          </div>
+        </div>
         <div id="library-scan-status" class="hidden"></div>
         <div id="library-list"></div>
       </aside>
@@ -44,7 +70,11 @@
             </div>
             <div id="visualizer-wrap">
               <canvas id="visualizer" width="76" height="32"></canvas>
-              <button id="btn-visualizer-max" title="Maximizar visualizador">&#9635;</button>
+              <div id="visualizer-tools">
+                <button id="btn-visualizer-mode" title="Barras / osciloscopio">&#9776;</button>
+                <button id="btn-visualizer-fullscreen" title="Pantalla completa del monitor">&#9974;</button>
+                <button id="btn-visualizer-max" title="Modo visualizador">&#9635;</button>
+              </div>
             </div>
             <div id="display-info">
               <div id="track-marquee" class="lcd-text"></div>

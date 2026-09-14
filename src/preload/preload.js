@@ -45,6 +45,8 @@ contextBridge.exposeInMainWorld('api', {
     close: () => ipcRenderer.invoke('window:close'),
     setAlwaysOnTop: (value) => ipcRenderer.invoke('window:setAlwaysOnTop', value),
     isAlwaysOnTop: () => ipcRenderer.invoke('window:isAlwaysOnTop'),
+    setFullScreen: (value) => ipcRenderer.invoke('window:setFullScreen', value),
+    isFullScreen: () => ipcRenderer.invoke('window:isFullScreen'),
     getSize: () => ipcRenderer.invoke('window:getSize'),
     resizeToFitPanels: (width, height) => ipcRenderer.invoke('window:resizeToFitPanels', { width, height })
   }

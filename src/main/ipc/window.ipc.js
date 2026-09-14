@@ -32,6 +32,20 @@ function registerWindowIpc(getMainWindow) {
     return getMainWindow()?.isAlwaysOnTop() ?? false;
   });
 
+  ipcMain.handle('window:setFullScreen', (event, value) => {
+    const win = getMainWindow();
+    if (!win) return false;
+    // Fullscreen ignora el minimumSize, pero si el modo persiana lo dejo
+    // reducido hay que restaurarlo o la ventana vuelve colapsada al salir.
+    win.setMinimumSize(660, 380);
+    win.setFullScreen(!!value);
+    return win.isFullScreen();
+  });
+
+  ipcMain.handle('window:isFullScreen', () => {
+    return getMainWindow()?.isFullScreen() ?? false;
+  });
+
   ipcMain.handle('window:getSize', () => {
     return getMainWindow()?.getSize() ?? [960, 640];
   });
