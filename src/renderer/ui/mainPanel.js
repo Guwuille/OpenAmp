@@ -13,6 +13,7 @@ export function initMainPanel({ playback, visualizer }) {
   const repeatBtn = document.getElementById('btn-repeat');
   const eqToggleBtn = document.getElementById('btn-toggle-eq');
   const plToggleBtn = document.getElementById('btn-toggle-pl');
+  const lyricsToggleBtn = document.getElementById('btn-toggle-lyrics');
   const seekBar = document.getElementById('seek-bar');
   const timeDisplay = document.getElementById('time-display');
   const trackFormat = document.getElementById('track-format');
@@ -20,6 +21,7 @@ export function initMainPanel({ playback, visualizer }) {
   const balanceSlider = document.getElementById('balance-slider');
   const eqPanel = document.getElementById('panel-equalizer');
   const plPanel = document.getElementById('panel-playlist');
+  const lyricsPanel = document.getElementById('panel-lyrics');
   const displayRow = document.getElementById('display-row');
   const appShell = document.getElementById('app-shell');
   const visualizerWrap = document.getElementById('visualizer-wrap');
@@ -47,17 +49,21 @@ export function initMainPanel({ playback, visualizer }) {
   });
   resizeObserver.observe(visualizerWrap);
 
+  // El modo vive en el store, no solo en una clase del DOM: otros paneles
+  // (las letras, que se superponen al visualizador) necesitan reaccionar.
   function setVisualizerMode(on) {
     visualizerMode = on;
     appShell.classList.toggle('visualizer-mode', on);
     maxBtn.textContent = on ? '▢' : '▣';
     maxBtn.title = on ? 'Salir del modo visualizador' : 'Modo visualizador';
+    store.setState({ visualizerMode: on });
   }
 
   async function setFullscreen(on) {
     fullscreen = await window.api.window.setFullScreen(on);
     appShell.classList.toggle('fullscreen', fullscreen);
     fullscreenBtn.classList.toggle('active', fullscreen);
+    store.setState({ visualizerFullscreen: fullscreen });
     // Pantalla completa sin el modo visualizador no tiene sentido: lo unico
     // que gana tamano es el visualizador.
     if (fullscreen && !visualizerMode) setVisualizerMode(true);
@@ -122,6 +128,11 @@ export function initMainPanel({ playback, visualizer }) {
     store.setState({ visiblePanels });
   });
 
+  lyricsToggleBtn.addEventListener('click', () => {
+    const current = store.getState().visiblePanels;
+    store.setState({ visiblePanels: { ...current, lyrics: !current.lyrics } });
+  });
+
   seekBar.addEventListener('mousedown', () => (seeking = true));
   seekBar.addEventListener('change', () => {
     const fraction = Number(seekBar.value) / 1000;
@@ -149,8 +160,10 @@ export function initMainPanel({ playback, visualizer }) {
 
     eqToggleBtn.classList.toggle('active', state.visiblePanels.equalizer);
     plToggleBtn.classList.toggle('active', state.visiblePanels.playlist);
+    lyricsToggleBtn.classList.toggle('active', state.visiblePanels.lyrics);
     eqPanel.classList.toggle('hidden', !state.visiblePanels.equalizer);
     plPanel.classList.toggle('hidden', !state.visiblePanels.playlist);
+    lyricsPanel.classList.toggle('hidden', !state.visiblePanels.lyrics);
 
     if (state.currentTrack) {
       const t = state.currentTrack;

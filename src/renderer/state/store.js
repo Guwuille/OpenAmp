@@ -18,8 +18,11 @@ const state = {
   shuffle: false,
   repeat: 'none',
   eq: { enabled: true, preamp: 0, bands: new Array(10).fill(0), preset: 'Flat' },
-  visiblePanels: { playlist: true, equalizer: false },
+  visiblePanels: { playlist: true, equalizer: false, lyrics: false },
   librarySearch: '',
+  lyricsAutoFetch: true,
+  visualizerMode: false,
+  visualizerFullscreen: false,
   libraryGroupBy: 'album',
   librarySortBy: 'track',
   librarySortDir: 'asc'

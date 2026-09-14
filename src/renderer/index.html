@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="styles/main-panel.css" />
 <link rel="stylesheet" href="styles/playlist-panel.css" />
 <link rel="stylesheet" href="styles/equalizer-panel.css" />
+<link rel="stylesheet" href="styles/lyrics-panel.css" />
 <link rel="stylesheet" href="styles/theme-guwusoft.css" />
 </head>
 <body>
@@ -70,6 +71,11 @@
             </div>
             <div id="visualizer-wrap">
               <canvas id="visualizer" width="76" height="32"></canvas>
+              <div id="lyrics-overlay" class="hidden">
+                <div id="lyrics-overlay-prev"></div>
+                <div id="lyrics-overlay-current"></div>
+                <div id="lyrics-overlay-next"></div>
+              </div>
               <div id="visualizer-tools">
                 <button id="btn-visualizer-mode" title="Barras / osciloscopio">&#9776;</button>
                 <button id="btn-visualizer-fullscreen" title="Pantalla completa del monitor">&#9974;</button>
@@ -109,6 +115,7 @@
             </div>
 
             <button id="btn-toggle-eq" class="toggle-btn" title="Ecualizador">EQ</button>
+            <button id="btn-toggle-lyrics" class="toggle-btn" title="Letras">LRC</button>
             <button id="btn-toggle-pl" class="toggle-btn active" title="Playlist">PL</button>
           </div>
         </section>
@@ -125,6 +132,44 @@
               <label>PRE</label>
             </div>
             <div id="eq-band-container"></div>
+          </div>
+        </section>
+
+        <section id="panel-lyrics" class="hidden">
+          <div class="panel-header">
+            <span>LETRAS</span>
+            <span id="lyrics-source"></span>
+            <button id="btn-lyrics-nudge-back" title="Atrasar la letra 100 ms">&minus;</button>
+            <button id="btn-lyrics-nudge-fwd" title="Adelantar la letra 100 ms">+</button>
+            <button id="btn-lyrics-auto" class="toggle-btn"
+              title="Buscar sola la letra en LRCLIB cuando la pista no la trae">AUTO</button>
+            <button id="btn-lyrics-fetch" title="Buscar la letra en LRCLIB">Buscar</button>
+            <button id="btn-lyrics-edit" title="Editar o pegar la letra">Editar</button>
+          </div>
+
+          <div id="lyrics-view"></div>
+
+          <div id="lyrics-editor" class="hidden">
+            <textarea id="lyrics-text" spellcheck="false"
+              placeholder="Pega aca la letra, una linea por renglon. Si ya trae marcas [mm:ss.xx] se respetan."></textarea>
+            <div class="lyrics-tools">
+              <button id="btn-lyrics-sync" title="Marcar los tiempos escuchando la cancion">Sincronizar</button>
+              <button id="btn-lyrics-save">Guardar</button>
+              <button id="btn-lyrics-cancel">Cancelar</button>
+            </div>
+          </div>
+
+          <div id="lyrics-sync" class="hidden">
+            <div id="lyrics-sync-progress"></div>
+            <div id="lyrics-sync-done"></div>
+            <div id="lyrics-sync-current"></div>
+            <div id="lyrics-sync-next"></div>
+            <div class="lyrics-tools">
+              <button id="btn-lyrics-mark" title="Marca el tiempo de la linea actual">Marcar (Espacio)</button>
+              <button id="btn-lyrics-undo" title="Deshacer la ultima marca">Deshacer</button>
+              <button id="btn-lyrics-sync-save">Guardar</button>
+              <button id="btn-lyrics-sync-cancel">Cancelar</button>
+            </div>
           </div>
         </section>
 

@@ -474,6 +474,115 @@ input[type="range"]:active::-webkit-slider-thumb {
   border-right: 1px solid rgba(255, 131, 0, .2);
 }
 
+/* Letras */
+
+#panel-lyrics {
+  background: rgba(6, 2, 0, .5);
+}
+
+.lyrics-status {
+  color: rgba(255, 180, 100, .65);
+}
+
+.lyrics-status.ok {
+  color: var(--neon);
+  text-shadow: 0 0 5px rgba(170, 255, 0, .4);
+}
+
+.lyrics-status.warn {
+  color: var(--gold);
+}
+
+.lyrics-line {
+  color: rgba(232, 223, 200, .42);
+  border-radius: 2px;
+}
+
+.lyrics-line:hover {
+  color: var(--fg);
+  background: rgba(255, 131, 0, .1);
+}
+
+.lyrics-line.untimed:hover {
+  background: transparent;
+}
+
+.lyrics-line.active {
+  color: var(--neon);
+  text-shadow: 0 0 8px rgba(170, 255, 0, .55);
+}
+
+/* En LRC extendido la linea activa arranca apagada y se va encendiendo
+   palabra por palabra. */
+.lyrics-line.active .lyrics-word {
+  color: rgba(170, 255, 0, .38);
+  text-shadow: none;
+  transition: color .1s;
+}
+
+.lyrics-line.active .lyrics-word.sung {
+  color: var(--neon);
+  text-shadow: 0 0 8px rgba(170, 255, 0, .6);
+}
+
+.lyrics-empty {
+  color: rgba(232, 223, 200, .4);
+}
+
+#lyrics-text {
+  background: rgba(0, 0, 0, .6);
+  color: var(--fg);
+  border: 1px solid rgba(255, 131, 0, .35);
+  border-radius: 2px;
+  font-family: 'Consolas', 'Courier New', monospace;
+  outline: none;
+}
+
+#lyrics-text:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 6px rgba(255, 131, 0, .3);
+}
+
+#lyrics-sync-progress {
+  color: rgba(255, 180, 100, .7);
+}
+
+#lyrics-sync-done {
+  color: rgba(232, 223, 200, .35);
+}
+
+#lyrics-sync-current {
+  color: var(--neon);
+  text-shadow: 0 0 8px rgba(170, 255, 0, .5);
+}
+
+#lyrics-sync-next {
+  color: rgba(232, 223, 200, .5);
+}
+
+.lyrics-tools button:disabled {
+  opacity: .4;
+  cursor: default;
+  filter: grayscale(.6);
+}
+
+/* Superposicion sobre el visualizador: degradado para que la letra se lea
+   por encima del espectro. */
+#lyrics-overlay {
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, .78) 48%, rgba(0, 0, 0, .92));
+}
+
+#lyrics-overlay-current {
+  color: var(--neon);
+  text-shadow: 0 0 12px rgba(170, 255, 0, .7), 0 2px 4px rgba(0, 0, 0, .9);
+}
+
+#lyrics-overlay-prev,
+#lyrics-overlay-next {
+  color: rgba(232, 223, 200, .45);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, .9);
+}
+
 /* Playlist */
 
 #panel-playlist {

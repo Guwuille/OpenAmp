@@ -108,6 +108,7 @@
 
 #app-shell.visualizer-mode #library-panel,
 #app-shell.visualizer-mode #panel-equalizer,
+#app-shell.visualizer-mode #panel-lyrics,
 #app-shell.visualizer-mode #panel-playlist {
   display: none !important;
 }

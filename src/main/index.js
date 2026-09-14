@@ -6,6 +6,7 @@ const registerLibraryIpc = require('./ipc/library.ipc');
 const registerPlaylistsIpc = require('./ipc/playlists.ipc');
 const registerDialogsIpc = require('./ipc/dialogs.ipc');
 const registerWindowIpc = require('./ipc/window.ipc');
+const registerLyricsIpc = require('./ipc/lyrics.ipc');
 const settingsStore = require('./settingsStore');
 
 let mainWindow = null;
@@ -96,6 +97,7 @@ app.whenReady().then(() => {
   registerPlaylistsIpc();
   registerDialogsIpc();
   registerWindowIpc(() => mainWindow);
+  registerLyricsIpc();
 
   createWindow();
   createTray();

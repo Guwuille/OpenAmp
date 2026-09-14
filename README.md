@@ -32,6 +32,11 @@ Ejecutar de todas formas*.
   en el orden que estás viendo.
 - **Ecualizador**: 10 bandas (60 Hz a 16 kHz) con preamplificador y 8 presets
   — Flat, Rock, Pop, Jazz, Classical, Bass Boost, Treble Boost y Vocal.
+- **Letras sincronizadas**: formato LRC, incluida la variante extendida que
+  marca los tiempos palabra por palabra. La línea actual se resalta al ritmo de
+  la canción y podés hacer clic en cualquier línea para saltar a ese momento.
+  Se ven en su propio panel y también superpuestas sobre el visualizador en
+  modo maximizado. Ver [Letras](#letras) para el detalle.
 - **Playlists**: varias listas, reordenamiento por *drag and drop*, e
   importación y exportación en M3U.
 - **Visualizador**: barras de espectro y osciloscopio, conmutables. Tiene un
@@ -42,6 +47,34 @@ Ejecutar de todas formas*.
 - **Ventana**: sin marco, redimensionable, con *always on top*, icono en la
   bandeja del sistema y modo persiana — doble clic en la barra de título
   colapsa la ventana dejando solo esa barra.
+
+## Letras
+
+OpenAmp busca la letra de cada pista en este orden:
+
+1. Un archivo `.lrc` con el mismo nombre que la canción, en la misma carpeta.
+2. Las letras embebidas en las etiquetas del archivo de audio.
+3. [LRCLIB](https://lrclib.net), si la búsqueda automática está activada.
+
+Cuando la encuentra online y viene sincronizada, la guarda como `.lrc` junto a
+la canción para no volver a pedirla. Nunca pisa un `.lrc` que ya exista.
+
+El botón **AUTO** del panel controla el paso 3. Tenelo en cuenta: con la
+búsqueda automática encendida, cada vez que suena una pista sin letra se envían
+su artista, título, álbum y duración a un servidor externo. Apagalo y OpenAmp
+no toca la red; podés seguir usando el botón **Buscar** cuando vos quieras.
+
+Si la letra no existe en ningún lado, **Editar** te deja pegarla y
+**Sincronizar** marca los tiempos: suena la canción y vas apretando `Espacio`
+al empezar cada línea (`Retroceso` deshace la última marca). El resultado se
+guarda como `.lrc` estándar, compatible con cualquier otro reproductor.
+
+Si la letra va adelantada o atrasada respecto del audio, los botones `−` y `+`
+la corren de a 100 ms.
+
+La consulta a LRCLIB se hace desde el proceso principal, no desde la interfaz.
+Así el renderer conserva su CSP cerrada (`default-src 'self'`) y no necesita
+permiso para hablar con la red.
 
 ## Desarrollo
 

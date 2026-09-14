@@ -6,6 +6,7 @@ import { initMainPanel } from './ui/mainPanel.js';
 import { initEqualizerPanel } from './ui/equalizerPanel.js';
 import { initPlaylistPanel } from './ui/playlistPanel.js';
 import { initLibraryBrowser } from './ui/libraryBrowser.js';
+import { initLyricsPanel } from './ui/lyricsPanel.js';
 
 const audioEngine = createAudioEngine();
 
@@ -161,6 +162,8 @@ async function bootstrap() {
   initMainPanel({ playback, visualizer });
 
   initEqualizerPanel({ audioEngine });
+
+  initLyricsPanel({ audioEngine });
 
   const playlistApi = initPlaylistPanel({
     onPlayTrack: (list, index) => playback.playTrackAt(list, index)

@@ -36,6 +36,12 @@ contextBridge.exposeInMainWorld('api', {
     selectSaveM3U: (defaultName) => ipcRenderer.invoke('dialog:selectSaveM3U', defaultName),
     selectOpenM3U: () => ipcRenderer.invoke('dialog:selectOpenM3U')
   },
+  lyrics: {
+    load: (trackPath) => ipcRenderer.invoke('lyrics:load', trackPath),
+    save: (trackPath, text) => ipcRenderer.invoke('lyrics:save', { trackPath, text }),
+    hasSidecar: (trackPath) => ipcRenderer.invoke('lyrics:hasSidecar', trackPath),
+    fetchOnline: (query) => ipcRenderer.invoke('lyrics:fetchOnline', query)
+  },
   settings: {
     get: (key) => ipcRenderer.invoke('settings:get', key),
     set: (key, value) => ipcRenderer.invoke('settings:set', { key, value })
