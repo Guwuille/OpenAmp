@@ -8,7 +8,6 @@ import { initPlaylistPanel } from './ui/playlistPanel.js';
 import { initLibraryBrowser } from './ui/libraryBrowser.js';
 import { initLyricsPanel } from './ui/lyricsPanel.js';
 import { initMiniPlayer } from './ui/miniPlayer.js';
-import { initDownloadPanel } from './ui/downloadPanel.js';
 
 const audioEngine = createAudioEngine();
 
@@ -194,8 +193,6 @@ async function bootstrap() {
     onPlayTrack: (list, index) => playback.playTrackAt(list, index),
     onAddToActivePlaylist: (trackId) => playlistApi.addTrackToActivePlaylist(trackId)
   });
-
-  initDownloadPanel();
 
   // El proceso principal reescanea al arrancar y vigila las carpetas, asi
   // que la biblioteca se actualiza sola cuando aparece o cambia musica.

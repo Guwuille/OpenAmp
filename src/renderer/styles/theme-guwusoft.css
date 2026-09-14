@@ -148,7 +148,6 @@ body::after {
 
 #library-toolbar button,
 #btn-library-sort-dir,
-#library-download button,
 .panel-header button {
   padding: 3px 9px;
   border-radius: 3px;
@@ -171,7 +170,6 @@ body::after {
 
 #library-toolbar button:hover,
 #btn-library-sort-dir:hover,
-#library-download button:hover,
 .panel-header button:hover {
   background: linear-gradient(180deg,
     rgba(255, 205, 100, .95) 0%,
@@ -182,7 +180,6 @@ body::after {
 
 #library-toolbar button:active,
 #btn-library-sort-dir:active,
-#library-download button:active,
 .panel-header button:active {
   background: linear-gradient(180deg, rgba(140, 28, 0, .92) 0%, rgba(200, 68, 0, .92) 100%);
   box-shadow: inset 0 2px 5px rgba(0, 0, 0, .5);
@@ -190,7 +187,6 @@ body::after {
 
 .panel-header select,
 #library-organize select,
-#library-download select,
 #library-search {
   background: rgba(0, 0, 0, .55);
   color: var(--orange-lt);
@@ -203,59 +199,6 @@ body::after {
 #library-organize label {
   color: rgba(255, 180, 100, .7);
   letter-spacing: .3px;
-}
-
-/* ── Descarga desde URL ───────────────────────────────────────────────── */
-
-#library-download {
-  border-top: 1px solid rgba(255, 131, 0, .18);
-  padding-top: 6px;
-}
-
-#download-url {
-  background: rgba(0, 0, 0, .55);
-  color: var(--orange-lt);
-  border: 1px solid rgba(255, 131, 0, .4);
-  border-radius: 2px;
-  outline: none;
-}
-
-#download-url:focus {
-  border-color: var(--orange);
-  box-shadow: 0 0 6px rgba(255, 131, 0, .35);
-}
-
-#download-url::placeholder {
-  color: rgba(232, 223, 200, .3);
-}
-
-#download-status {
-  color: rgba(232, 223, 200, .6);
-}
-
-#download-status.ok {
-  color: var(--neon);
-  text-shadow: 0 0 5px rgba(170, 255, 0, .4);
-}
-
-#download-status.warn {
-  color: var(--gold);
-}
-
-#download-bar {
-  background: rgba(0, 0, 0, .55);
-  border: 1px solid rgba(255, 131, 0, .3);
-  border-radius: 2px;
-}
-
-#download-bar-fill {
-  background: linear-gradient(90deg, #ff8300, #ffcc00);
-}
-
-#btn-download-start,
-#btn-download-cancel,
-#btn-toggle-download {
-  flex-shrink: 0;
 }
 
 #btn-library-sort-dir.active {
