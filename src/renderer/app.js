@@ -174,6 +174,12 @@ async function bootstrap() {
     onAddToActivePlaylist: (trackId) => playlistApi.addTrackToActivePlaylist(trackId)
   });
 
+  // El proceso principal reescanea al arrancar y vigila las carpetas, asi
+  // que la biblioteca se actualiza sola cuando aparece o cambia musica.
+  window.api.library.onUpdated(({ tracks }) => {
+    store.setState({ tracks });
+  });
+
   const [tracks, volume, balance] = await Promise.all([
     window.api.library.getAllTracks(),
     window.api.settings.get('volume'),

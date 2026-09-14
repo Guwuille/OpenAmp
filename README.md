@@ -24,7 +24,11 @@ Ejecutar de todas formas*.
 - **Formatos**: FLAC, MP3, WAV y OGG.
 - **Biblioteca**: escaneo recursivo de carpetas en un *worker thread* (no
   congela la interfaz), metadatos con `music-metadata` y catálogo en SQLite.
-  Las carátulas embebidas se extraen y se cachean por hash.
+  Las carátulas embebidas se extraen y se cachean por hash. Las carpetas
+  quedan vigiladas: si agregás, cambiás o borrás música, la lista se
+  actualiza sola, y al arrancar se revisa lo que pasó mientras la app estaba
+  cerrada. El reescaneo es incremental — saltea por fecha de modificación lo
+  que no cambió, así que no relee los metadatos de toda la biblioteca.
 - **Organización**: agrupá por álbum, artista, carpeta, género o año — o sin
   agrupar — y ordená por número de pista, título, artista, álbum, año,
   duración o fecha de agregado, en cualquier dirección. La preferencia se
@@ -40,13 +44,15 @@ Ejecutar de todas formas*.
 - **Playlists**: varias listas, reordenamiento por *drag and drop*, e
   importación y exportación en M3U.
 - **Visualizador**: barras de espectro y osciloscopio, conmutables. Tiene un
-  modo que le da toda la ventana, ocultando biblioteca, ecualizador y playlist
-  pero dejando a mano la info de la pista y el transporte, y desde ahí se pasa
-  a pantalla completa del monitor. `Escape` sale de pantalla completa primero
-  y del modo después.
-- **Ventana**: sin marco, redimensionable, con *always on top*, icono en la
-  bandeja del sistema y modo persiana — doble clic en la barra de título
-  colapsa la ventana dejando solo esa barra.
+  modo que le da toda la ventana y desde ahí se pasa a pantalla completa del
+  monitor. Al entrar, los paneles se colapsan para dejarle todo el espacio,
+  pero los botones EQ, LRC y PL siguen funcionando: podés abrir el ecualizador
+  o la playlist sin salir del modo, y al salir vuelve lo que tenías abierto.
+  `Escape` sale de pantalla completa primero y del modo después.
+- **Ventana**: sin marco, redimensionable, con *always on top*, botones de
+  minimizar, maximizar y cerrar propios, icono en la bandeja del sistema y
+  modo persiana — doble clic en la barra de título colapsa la ventana dejando
+  solo esa barra. El tamaño y el estado maximizado se recuerdan al cerrar.
 
 ## Letras
 

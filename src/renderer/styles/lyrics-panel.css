@@ -31,12 +31,14 @@
 /* ── Vista ────────────────────────────────────────────────────────────── */
 
 #lyrics-view {
+  position: relative;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   padding: 10px 12px;
   text-align: center;
-  scroll-behavior: smooth;
+  /* Sin scroll-behavior aca a proposito: anularia el salto instantaneo que
+     el panel elige para las distancias grandes. */
 }
 
 .lyrics-line {

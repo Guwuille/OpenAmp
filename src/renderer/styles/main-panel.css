@@ -106,11 +106,19 @@
 
 /* ── Modo visualizador: la ventana entera pasa a ser el visualizador ── */
 
-#app-shell.visualizer-mode #library-panel,
+/* Solo la biblioteca se esconde por regla: es una barra lateral sin boton
+   propio. El ecualizador, las letras y la playlist obedecen sus toggles, asi
+   que se pueden abrir sin salir del modo; el visualizador cede el alto que
+   haga falta y conserva el resto. */
+#app-shell.visualizer-mode #library-panel {
+  display: none !important;
+}
+
 #app-shell.visualizer-mode #panel-equalizer,
 #app-shell.visualizer-mode #panel-lyrics,
 #app-shell.visualizer-mode #panel-playlist {
-  display: none !important;
+  flex: 0 0 auto;
+  max-height: 45%;
 }
 
 #app-shell.visualizer-mode #panel-main {

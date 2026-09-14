@@ -3,13 +3,14 @@ const { Worker } = require('node:worker_threads');
 const tracksRepo = require('../db/tracksRepo');
 const { getCoversDir } = require('./coverCache');
 
-function scanFolder(folder, onProgress) {
+function scanFolder(folder, known, onProgress) {
   return new Promise((resolve, reject) => {
     const worker = new Worker(path.join(__dirname, 'scanner.worker.js'), {
       workerData: {
         folderPath: folder.path,
         folderId: folder.id,
-        coversDir: getCoversDir()
+        coversDir: getCoversDir(),
+        known
       }
     });
 
@@ -17,7 +18,7 @@ function scanFolder(folder, onProgress) {
       if (msg.type === 'progress') {
         onProgress?.(msg);
       } else if (msg.type === 'done') {
-        resolve(msg.tracks);
+        resolve({ tracks: msg.tracks, unchanged: msg.unchanged || [] });
       } else if (msg.type === 'error') {
         reject(new Error(msg.message));
       }
@@ -32,17 +33,29 @@ function scanFolder(folder, onProgress) {
 
 async function scanFolders(folders, onProgress) {
   let addedCount = 0;
+  let changedCount = 0;
 
   for (const folder of folders) {
-    const tracks = await scanFolder(folder, onProgress);
-    tracksRepo.upsertTracksBatch(tracks);
-    const existingPaths = new Set(tracks.map((t) => t.file_path));
-    tracksRepo.removeMissingTracks(folder.id, existingPaths);
+    const known = tracksRepo.getFolderFileStamps(folder.id);
+    const { tracks, unchanged } = await scanFolder(folder, known, onProgress);
+
+    if (tracks.length > 0) tracksRepo.upsertTracksBatch(tracks);
+
+    // Los salteados siguen existiendo en disco: tienen que contar como
+    // presentes o removeMissingTracks los borraria del catalogo.
+    const existingPaths = new Set(unchanged);
+    for (const track of tracks) existingPaths.add(track.file_path);
+
+    const removed = tracksRepo.removeMissingTracks(folder.id, existingPaths);
     tracksRepo.touchFolderScanned(folder.id);
+
     addedCount += tracks.length;
+    changedCount += tracks.length + removed;
   }
 
-  return { addedCount };
+  // changedCount permite no molestar a la interfaz cuando el reescaneo no
+  // encontro nada nuevo, que es el caso normal al arrancar.
+  return { addedCount, changedCount };
 }
 
 module.exports = { scanFolders };

@@ -28,6 +28,18 @@ function getTrackById(id) {
   return getDatabase().prepare('SELECT * FROM tracks WHERE id = ?').get(id);
 }
 
+// Fecha de modificacion de lo que ya esta indexado, para que el escaneo
+// pueda saltearse los archivos que no cambiaron en vez de releer sus
+// metadatos desde cero.
+function getFolderFileStamps(folderId) {
+  const rows = getDatabase()
+    .prepare('SELECT file_path, date_modified FROM tracks WHERE folder_id = ?')
+    .all(folderId);
+  const stamps = Object.create(null);
+  for (const row of rows) stamps[row.file_path] = row.date_modified;
+  return stamps;
+}
+
 const upsertTrackStmt = () => getDatabase().prepare(`
   INSERT INTO tracks (
     file_path, title, artist, album, album_artist, genre, year, track_no, disc_no,
@@ -73,6 +85,7 @@ module.exports = {
   touchFolderScanned,
   getAllTracks,
   getTrackById,
+  getFolderFileStamps,
   upsertTracksBatch,
   removeMissingTracks
 };

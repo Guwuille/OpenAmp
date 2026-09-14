@@ -39,6 +39,7 @@ export function initMainPanel({ playback, visualizer }) {
   let visualizerMode = false;
   let fullscreen = false;
   let albumArtMaximized = false;
+  let panelsBeforeVisualizer = null;
 
   // El canvas siempre sigue el tamano real de su contenedor, asi se adapta
   // solo al entrar en modo visualizador, al pasar a pantalla completa y al
@@ -56,7 +57,23 @@ export function initMainPanel({ playback, visualizer }) {
     appShell.classList.toggle('visualizer-mode', on);
     maxBtn.textContent = on ? '▢' : '▣';
     maxBtn.title = on ? 'Salir del modo visualizador' : 'Modo visualizador';
-    store.setState({ visualizerMode: on });
+
+    if (on) {
+      // Al entrar se colapsan los paneles para que el visualizador se quede
+      // con toda la ventana, pero EQ, LRC y PL siguen funcionando: se pueden
+      // abrir sin salir del modo, y al salir vuelve lo que habia antes.
+      if (panelsBeforeVisualizer === null) {
+        panelsBeforeVisualizer = { ...store.getState().visiblePanels };
+      }
+      store.setState({
+        visualizerMode: true,
+        visiblePanels: { equalizer: false, lyrics: false, playlist: false }
+      });
+    } else {
+      const restore = panelsBeforeVisualizer || store.getState().visiblePanels;
+      panelsBeforeVisualizer = null;
+      store.setState({ visualizerMode: false, visiblePanels: { ...restore } });
+    }
   }
 
   async function setFullscreen(on) {

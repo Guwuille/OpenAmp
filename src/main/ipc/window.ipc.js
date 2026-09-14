@@ -32,6 +32,24 @@ function registerWindowIpc(getMainWindow) {
     return getMainWindow()?.isAlwaysOnTop() ?? false;
   });
 
+  ipcMain.handle('window:toggleMaximize', () => {
+    const win = getMainWindow();
+    if (!win) return false;
+    if (win.isMaximized()) {
+      win.unmaximize();
+    } else {
+      // El modo persiana deja el minimumSize reducido; sin restaurarlo la
+      // ventana maximizada podria volver colapsada.
+      win.setMinimumSize(660, 380);
+      win.maximize();
+    }
+    return win.isMaximized();
+  });
+
+  ipcMain.handle('window:isMaximized', () => {
+    return getMainWindow()?.isMaximized() ?? false;
+  });
+
   ipcMain.handle('window:setFullScreen', (event, value) => {
     const win = getMainWindow();
     if (!win) return false;

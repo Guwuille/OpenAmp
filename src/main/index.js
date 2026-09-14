@@ -65,11 +65,25 @@ function createWindow() {
     }
   });
 
+  if (settingsStore.get('windowMaximized', false)) mainWindow.maximize();
+
   mainWindow.loadFile(path.join(__dirname, '..', 'renderer', 'index.html'));
+
+  // La ventana tambien se puede maximizar por fuera del boton (Win+flecha,
+  // arrastrarla al borde), asi que el estado se avisa en vez de suponerlo.
+  const sendMaximizeState = () => {
+    mainWindow?.webContents.send('window:maximizeChange', mainWindow.isMaximized());
+  };
+  mainWindow.on('maximize', sendMaximizeState);
+  mainWindow.on('unmaximize', sendMaximizeState);
 
   mainWindow.on('close', () => {
     if (!mainWindow) return;
-    settingsStore.set('windowBounds', mainWindow.getBounds());
+    // getNormalBounds y no getBounds: si se cierra maximizada, getBounds
+    // devuelve el tamano de pantalla completa y al restaurar la ventana
+    // quedaria de ese tamano pero sin estar maximizada.
+    settingsStore.set('windowBounds', mainWindow.getNormalBounds());
+    settingsStore.set('windowMaximized', mainWindow.isMaximized());
   });
 
   mainWindow.on('closed', () => {
@@ -93,7 +107,7 @@ app.whenReady().then(() => {
 
   getDatabase();
 
-  registerLibraryIpc();
+  const library = registerLibraryIpc(() => mainWindow);
   registerPlaylistsIpc();
   registerDialogsIpc();
   registerWindowIpc(() => mainWindow);
@@ -101,6 +115,11 @@ app.whenReady().then(() => {
 
   createWindow();
   createTray();
+
+  // El reescaneo de arranque avisa por IPC, asi que hay que esperar a que el
+  // renderer este listo o el mensaje se pierde.
+  mainWindow.webContents.once('did-finish-load', () => library.start());
+  app.on('before-quit', () => library.stop());
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

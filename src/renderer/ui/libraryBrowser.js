@@ -280,11 +280,11 @@ export function initLibraryBrowser({ onPlayTrack, onAddToActivePlaylist }) {
     statusEl.textContent = `Escaneando... ${scanned}/${total}`;
   });
 
-  window.api.library.onScanComplete(async () => {
+  // Las pistas llegan por library:updated, que se emite solo si el escaneo
+  // cambio algo; aca alcanza con cerrar el aviso de progreso.
+  window.api.library.onScanComplete(() => {
     statusEl.textContent = 'Listo';
     setTimeout(() => statusEl.classList.add('hidden'), 2000);
-    const tracks = await window.api.library.getAllTracks();
-    store.setState({ tracks });
   });
 
   window.api.library.onScanError(({ message }) => {

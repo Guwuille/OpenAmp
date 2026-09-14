@@ -7,6 +7,22 @@ export function initTitlebar() {
     window.api.window.close();
   });
 
+  const maximizeBtn = document.getElementById('btn-maximize');
+
+  function paintMaximized(isMax) {
+    // ❐ para restaurar, □ para maximizar, como en cualquier ventana.
+    maximizeBtn.textContent = isMax ? '❐' : '□';
+    maximizeBtn.title = isMax ? 'Restaurar' : 'Maximizar';
+    maximizeBtn.classList.toggle('active', isMax);
+  }
+
+  maximizeBtn.addEventListener('click', async () => {
+    paintMaximized(await window.api.window.toggleMaximize());
+  });
+
+  window.api.window.isMaximized().then(paintMaximized);
+  window.api.window.onMaximizeChange(paintMaximized);
+
   const pinBtn = document.getElementById('btn-pin');
   window.api.window.isAlwaysOnTop().then((isOnTop) => {
     pinBtn.classList.toggle('active', isOnTop);

@@ -15,7 +15,8 @@ contextBridge.exposeInMainWorld('api', {
     rescan: (folderId) => ipcRenderer.invoke('library:rescan', folderId),
     onScanProgress: (cb) => on('library:scanProgress', cb),
     onScanComplete: (cb) => on('library:scanComplete', cb),
-    onScanError: (cb) => on('library:scanError', cb)
+    onScanError: (cb) => on('library:scanError', cb),
+    onUpdated: (cb) => on('library:updated', cb)
   },
   playlists: {
     getAll: () => ipcRenderer.invoke('playlists:getAll'),
@@ -53,6 +54,9 @@ contextBridge.exposeInMainWorld('api', {
     isAlwaysOnTop: () => ipcRenderer.invoke('window:isAlwaysOnTop'),
     setFullScreen: (value) => ipcRenderer.invoke('window:setFullScreen', value),
     isFullScreen: () => ipcRenderer.invoke('window:isFullScreen'),
+    toggleMaximize: () => ipcRenderer.invoke('window:toggleMaximize'),
+    isMaximized: () => ipcRenderer.invoke('window:isMaximized'),
+    onMaximizeChange: (cb) => on('window:maximizeChange', cb),
     getSize: () => ipcRenderer.invoke('window:getSize'),
     resizeToFitPanels: (width, height) => ipcRenderer.invoke('window:resizeToFitPanels', { width, height })
   }

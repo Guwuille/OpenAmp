@@ -34,7 +34,7 @@ function walkDirSync(dir, results) {
 }
 
 async function run() {
-  const { folderPath, folderId, coversDir } = workerData;
+  const { folderPath, folderId, coversDir, known } = workerData;
   const { parseFile } = await import('music-metadata');
 
   const files = [];
@@ -42,11 +42,22 @@ async function run() {
 
   const total = files.length;
   const tracks = [];
+  const unchanged = [];
+  const stamps = known || {};
 
   for (let i = 0; i < files.length; i++) {
     const filePath = files[i];
     try {
       const stat = fs.statSync(filePath);
+
+      // Ya indexado y sin tocar desde entonces: no hace falta releer los
+      // metadatos, que es la parte lenta del escaneo.
+      if (stamps[filePath] != null && stamps[filePath] === stat.mtimeMs) {
+        unchanged.push(filePath);
+        parentPort.postMessage({ type: 'progress', scanned: i + 1, total, currentFile: filePath });
+        continue;
+      }
+
       const metadata = await parseFile(filePath, { duration: true, skipCovers: false });
       const common = metadata.common || {};
       const format = metadata.format || {};
@@ -78,7 +89,7 @@ async function run() {
     parentPort.postMessage({ type: 'progress', scanned: i + 1, total, currentFile: filePath });
   }
 
-  parentPort.postMessage({ type: 'done', tracks });
+  parentPort.postMessage({ type: 'done', tracks, unchanged });
 }
 
 run().catch((err) => {

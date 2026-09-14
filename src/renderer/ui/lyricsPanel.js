@@ -100,8 +100,23 @@ export function initLyricsPanel({ audioEngine }) {
     if (Date.now() < resumeAutoScrollAt) return;
     const el = lineEls[activeIndex];
     if (!el) return;
-    const target = el.offsetTop - viewEl.clientHeight / 2 + el.clientHeight / 2;
-    viewEl.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+
+    // Se mide contra el contenedor en vez de usar offsetTop: offsetTop es
+    // relativo al offsetParent, que no tiene por que ser #lyrics-view, y
+    // entonces el destino se va de rango y la letra salta al fondo.
+    const container = viewEl.getBoundingClientRect();
+    const line = el.getBoundingClientRect();
+    const delta = line.top - container.top - (viewEl.clientHeight - line.height) / 2;
+    const target = Math.max(0, Math.min(viewEl.scrollHeight - viewEl.clientHeight, viewEl.scrollTop + delta));
+
+    const distance = Math.abs(target - viewEl.scrollTop);
+    if (distance < 1) return;
+
+    // Suave entre lineas vecinas, instantaneo en saltos grandes: animar mas
+    // de pantalla y media se arrastra casi un segundo, y al buscar un punto
+    // lejano la letra tarda en llegar.
+    const far = distance > viewEl.clientHeight * 1.5;
+    viewEl.scrollTo({ top: target, behavior: far ? 'auto' : 'smooth' });
   }
 
   function lineText(index) {
