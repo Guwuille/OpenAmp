@@ -3,6 +3,8 @@ const settingsStore = require('../settingsStore');
 
 const NORMAL_MIN_WIDTH = 660;
 const NORMAL_MIN_HEIGHT = 380;
+const MINI_MIN_WIDTH = 240;
+const MINI_MIN_HEIGHT = 64;
 
 function registerWindowIpc(getMainWindow) {
   // Lo que habia antes de encoger, para poder devolver la ventana tal cual
@@ -24,11 +26,16 @@ function registerWindowIpc(getMainWindow) {
       if (win.isFullScreen()) win.setFullScreen(false);
       if (win.isMaximized()) win.unmaximize();
 
-      const w = Math.max(240, Math.round(width || 360));
-      const h = Math.max(72, Math.round(height || 120));
-      // El minimo normal es mas grande que el mini reproductor, asi que hay
-      // que bajarlo antes de encoger o la ventana no llega al tamano pedido.
-      win.setMinimumSize(w, h);
+      // El minimo se baja a un piso generoso, no al tamano exacto pedido: si
+      // el minimo fuera el tamano actual, la ventana quedaria clavada y no se
+      // podria agrandar ni achicar a mano.
+      win.setMinimumSize(MINI_MIN_WIDTH, MINI_MIN_HEIGHT);
+
+      // Sin ancho explicito se conserva el que tenga la ventana: asi cambiar
+      // una opcion no descarta el ancho que el usuario haya elegido.
+      const [currentWidth] = win.getSize();
+      const w = Math.max(MINI_MIN_WIDTH, Math.round(width || currentWidth));
+      const h = Math.max(MINI_MIN_HEIGHT, Math.round(height || 120));
       win.setSize(w, h, false);
       // Un mini reproductor tapado por otra ventana no sirve de nada.
       win.setAlwaysOnTop(true);

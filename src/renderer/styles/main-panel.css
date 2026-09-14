@@ -55,11 +55,29 @@
   opacity: 1 !important;
 }
 
+/* Caratula agrandada: ocupa el alto que sobre en el panel, asi se ajusta
+   redimensionando la ventana en vez de quedar clavada en un alto fijo. */
+#app-shell.albumart-maximized #panel-main,
+#app-shell.albumart-maximized #display-row {
+  flex: 1;
+  min-height: 0;
+}
+
 #display-row.albumart-maximized #album-art {
   order: -1;
   width: 100%;
+  flex: 1 1 auto;
   flex-basis: 100%;
-  height: 220px;
+  height: auto;
+  min-height: 120px;
+}
+
+#display-row.albumart-maximized #album-art img {
+  /* contain y no cover: la gracia de agrandarla es verla entera, sin recortar
+     los bordes. El suavizado tambien vuelve, porque a ese tamano el pixelado
+     que sirve para la miniatura se ve mal. */
+  object-fit: contain;
+  image-rendering: auto;
 }
 
 #visualizer-wrap {
@@ -119,6 +137,25 @@
 #app-shell.visualizer-mode #panel-playlist {
   flex: 0 0 auto;
   max-height: 45%;
+}
+
+/* La barra de titulo se aparta del camino y reaparece al acercar el cursor.
+   No se puede simplemente ocultar: la ventana no tiene marco del sistema, asi
+   que sin ella no habria forma de moverla, restaurarla ni cerrarla. Sigue
+   recibiendo el cursor aunque este invisible, y por eso alcanza con pasar por
+   encima para recuperarla. */
+#app-shell.visualizer-mode #titlebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity .15s;
+}
+
+#app-shell.visualizer-mode #titlebar:hover {
+  opacity: 1;
 }
 
 #app-shell.visualizer-mode #panel-main {

@@ -113,7 +113,11 @@ export function initMainPanel({ playback, visualizer }) {
     e.stopPropagation();
     albumArtMaximized = !albumArtMaximized;
     displayRow.classList.toggle('albumart-maximized', albumArtMaximized);
+    // Tambien en el shell: para que la caratula crezca con la ventana hay que
+    // dejar crecer al panel que la contiene, y eso esta fuera de display-row.
+    appShell.classList.toggle('albumart-maximized', albumArtMaximized);
     albumArtMaxBtn.textContent = albumArtMaximized ? '▢' : '▣';
+    albumArtMaxBtn.title = albumArtMaximized ? 'Achicar caratula' : 'Agrandar caratula';
   });
 
   playBtn.addEventListener('click', () => playback.play());

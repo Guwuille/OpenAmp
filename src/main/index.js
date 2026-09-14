@@ -14,8 +14,7 @@ let mainWindow = null;
 let tray = null;
 
 function createTray() {
-  const iconPath = path.join(__dirname, '..', '..', 'build', 'icon.ico');
-  const icon = nativeImage.createFromPath(iconPath);
+  const icon = nativeImage.createFromPath(ICON_PATH);
   tray = new Tray(icon.isEmpty() ? icon : icon.resize({ width: 16, height: 16 }));
   tray.setToolTip('OpenAmp');
 
@@ -46,6 +45,8 @@ function createTray() {
   });
 }
 
+const ICON_PATH = path.join(__dirname, '..', '..', 'build', 'icon.ico');
+
 function createWindow() {
   const savedBounds = settingsStore.get('windowBounds', { width: 960, height: 640 });
 
@@ -55,6 +56,9 @@ function createWindow() {
     minWidth: 660,
     minHeight: 380,
     frame: false,
+    // Sin esto la ventana usa el icono por defecto de Electron en la barra de
+    // tareas cuando se corre desde el codigo fuente.
+    icon: ICON_PATH,
     transparent: false,
     backgroundColor: '#050200',
     resizable: true,
@@ -93,6 +97,10 @@ function createWindow() {
 
   return mainWindow;
 }
+
+// Windows agrupa las ventanas en la barra de tareas por este identificador.
+// Sin el, la app corriendo desde el codigo fuente aparece como Electron.
+if (process.platform === 'win32') app.setAppUserModelId('com.openamp.player');
 
 app.whenReady().then(() => {
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {

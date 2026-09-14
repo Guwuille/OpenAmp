@@ -14,6 +14,7 @@ export function initMiniPlayer({ exitVisualizerMode = () => {} } = {}) {
   const onMinBtn = document.getElementById('btn-mini-onmin');
 
   let appliedSignature = null;
+  let wasMini = false;
 
   function signature(state) {
     const o = state.miniOptions;
@@ -44,11 +45,18 @@ export function initMiniPlayer({ exitVisualizerMode = () => {} } = {}) {
   // tapada o minimizada y el mini reproductor nunca llegaria a achicarse.
   function fitWindowToContent() {
     const height = titlebar.offsetHeight + panelMain.offsetHeight;
-    return window.api.window.setMiniMode({ enabled: true, width: MINI_WIDTH, height });
+    // El ancho solo se impone al entrar. Despues se manda sin ancho, para que
+    // cambiar una opcion ajuste el alto pero respete el ancho que el usuario
+    // haya dejado al redimensionar la ventana a mano.
+    const width = wasMini ? null : MINI_WIDTH;
+    wasMini = true;
+    return window.api.window.setMiniMode({ enabled: true, width, height });
   }
 
   function applyWindow(state) {
-    return state.miniMode ? fitWindowToContent() : window.api.window.setMiniMode({ enabled: false });
+    if (state.miniMode) return fitWindowToContent();
+    wasMini = false;
+    return window.api.window.setMiniMode({ enabled: false });
   }
 
   function setMini(enabled) {

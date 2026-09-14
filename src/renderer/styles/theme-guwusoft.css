@@ -73,6 +73,14 @@ body::after {
   background: var(--glass);
 }
 
+/* Maximizada, en modo visualizador o en pantalla completa el borde no tiene
+   sentido: no hay ventana que delimitar contra el escritorio. */
+#app-shell.maximized,
+#app-shell.visualizer-mode,
+#app-shell.fullscreen {
+  border: 0;
+}
+
 /* ── Barra de titulo XP Luna ──────────────────────────────────── */
 
 #titlebar {
