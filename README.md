@@ -53,6 +53,16 @@ Ejecutar de todas formas*.
   minimizar, maximizar y cerrar propios, icono en la bandeja del sistema y
   modo persiana — doble clic en la barra de título colapsa la ventana dejando
   solo esa barra. El tamaño y el estado maximizado se recuerdan al cerrar.
+- **Control desde la barra de tareas**: al pasar el cursor por el icono de la
+  app en la barra de tareas de Windows, la miniatura trae botones de anterior,
+  reproducir/pausar y siguiente, y el globo muestra qué está sonando. No hace
+  falta traer la ventana al frente.
+- **Mini reproductor**: la misma ventana encogida a ~360 px de ancho y siempre
+  visible por encima del resto, con la marquesina, la barra de progreso y el
+  transporte. Elegís si mostrar el visualizador, la carátula y la línea de
+  letra, y la ventana se ajusta de alto a lo que quede. Se entra con su botón
+  en la barra de título, y hay una opción para que el botón de minimizar abra
+  el mini reproductor en vez de mandar la app a la barra de tareas.
 
 ## Letras
 

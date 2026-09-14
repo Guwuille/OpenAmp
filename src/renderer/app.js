@@ -7,6 +7,7 @@ import { initEqualizerPanel } from './ui/equalizerPanel.js';
 import { initPlaylistPanel } from './ui/playlistPanel.js';
 import { initLibraryBrowser } from './ui/libraryBrowser.js';
 import { initLyricsPanel } from './ui/lyricsPanel.js';
+import { initMiniPlayer } from './ui/miniPlayer.js';
 
 const audioEngine = createAudioEngine();
 
@@ -153,13 +154,26 @@ audioEngine.on('error', (err) => {
 });
 
 async function bootstrap() {
-  initTitlebar();
+  let miniPlayer = null;
+
+  initTitlebar({
+    onMinimize: () => {
+      const { minimizeToMini, miniMode } = store.getState();
+      if (!minimizeToMini || miniMode || !miniPlayer) return false;
+      miniPlayer.enter();
+      return true;
+    }
+  });
 
   const visualizer = createVisualizer(document.getElementById('visualizer'), audioEngine.analyserNode);
   visualizer.start();
   document.getElementById('visualizer').addEventListener('click', () => visualizer.toggleMode());
 
-  initMainPanel({ playback, visualizer });
+  const mainPanelApi = initMainPanel({ playback, visualizer });
+
+  miniPlayer = initMiniPlayer({
+    exitVisualizerMode: () => mainPanelApi.exitVisualizerMode()
+  });
 
   initEqualizerPanel({ audioEngine });
 
@@ -178,6 +192,28 @@ async function bootstrap() {
   // que la biblioteca se actualiza sola cuando aparece o cambia musica.
   window.api.library.onUpdated(({ tracks }) => {
     store.setState({ tracks });
+  });
+
+  // Botones sobre la miniatura de la barra de tareas.
+  window.api.player.onCommand((command) => {
+    if (command === 'prev') playback.prev();
+    else if (command === 'next') playback.next();
+    else if (command === 'play') playback.play();
+    else if (command === 'pause') playback.pause();
+  });
+
+  // El store emite en cada timeupdate, asi que solo se avisa al proceso
+  // principal cuando cambia algo que la barra de tareas muestre.
+  let lastReported = null;
+  store.subscribe(() => {
+    const { isPlaying, currentTrack } = store.getState();
+    const title = currentTrack
+      ? [currentTrack.artist, currentTrack.title || currentTrack.file_path].filter(Boolean).join(' - ')
+      : '';
+    const signature = `${isPlaying} ${title}`;
+    if (signature === lastReported) return;
+    lastReported = signature;
+    window.api.player.setState({ isPlaying, title });
   });
 
   const [tracks, volume, balance] = await Promise.all([

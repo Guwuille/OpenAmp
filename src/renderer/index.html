@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="styles/playlist-panel.css" />
 <link rel="stylesheet" href="styles/equalizer-panel.css" />
 <link rel="stylesheet" href="styles/lyrics-panel.css" />
+<link rel="stylesheet" href="styles/mini-player.css" />
 <link rel="stylesheet" href="styles/theme-guwusoft.css" />
 </head>
 <body>
@@ -17,7 +18,13 @@
     <div id="titlebar">
       <span id="titlebar-logo">OpenAmp</span>
       <div id="titlebar-drag"></div>
+      <button id="btn-mini-vis" class="titlebar-btn mini-only" title="Mostrar el visualizador">V</button>
+      <button id="btn-mini-art" class="titlebar-btn mini-only" title="Mostrar la caratula">C</button>
+      <button id="btn-mini-lrc" class="titlebar-btn mini-only" title="Mostrar la letra">L</button>
+      <button id="btn-mini-onmin" class="titlebar-btn mini-only"
+        title="Minimizar abre el mini reproductor en vez de mandar la app a la barra de tareas">M</button>
       <button id="btn-pin" class="titlebar-btn" title="Siempre visible">P</button>
+      <button id="btn-mini" class="titlebar-btn" title="Mini reproductor">&#9644;</button>
       <button id="btn-minimize" class="titlebar-btn" title="Minimizar">&#9472;</button>
       <button id="btn-maximize" class="titlebar-btn" title="Maximizar">&#9633;</button>
       <button id="btn-close" class="titlebar-btn" title="Cerrar">&#10005;</button>
@@ -89,6 +96,7 @@
                 <span id="time-display" class="lcd-text">00:00 / 00:00</span>
                 <span id="track-format" class="lcd-text"></span>
               </div>
+              <div id="mini-lyric" class="lcd-text"></div>
             </div>
           </div>
 
@@ -106,11 +114,11 @@
             <button id="btn-shuffle" class="toggle-btn" title="Aleatorio">SHUF</button>
             <button id="btn-repeat" class="toggle-btn" title="Repetir">REP</button>
 
-            <div class="slider-group">
+            <div class="slider-group" id="volume-group">
               <label>VOL</label>
               <input id="volume-slider" type="range" min="0" max="100" value="80" />
             </div>
-            <div class="slider-group">
+            <div class="slider-group" id="balance-group">
               <label>BAL</label>
               <input id="balance-slider" type="range" min="-100" max="100" value="0" />
             </div>

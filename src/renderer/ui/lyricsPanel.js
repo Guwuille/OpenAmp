@@ -19,6 +19,7 @@ export function initLyricsPanel({ audioEngine }) {
   const overlayPrev = document.getElementById('lyrics-overlay-prev');
   const overlayCurrent = document.getElementById('lyrics-overlay-current');
   const overlayNext = document.getElementById('lyrics-overlay-next');
+  const miniLyric = document.getElementById('mini-lyric');
 
   const autoBtn = document.getElementById('btn-lyrics-auto');
   const fetchBtn = document.getElementById('btn-lyrics-fetch');
@@ -137,11 +138,15 @@ export function initLyricsPanel({ audioEngine }) {
       overlayPrev.textContent = '';
       overlayCurrent.textContent = '';
       overlayNext.textContent = '';
+      miniLyric.textContent = '';
       return;
     }
+    const current = activeIndex >= 0 ? lineText(activeIndex) : '';
     overlayPrev.textContent = activeIndex > 0 ? lineText(activeIndex - 1) : '';
-    overlayCurrent.textContent = activeIndex >= 0 ? lineText(activeIndex) : '';
+    overlayCurrent.textContent = current;
     overlayNext.textContent = lineText(activeIndex + 1);
+    // Misma linea para el mini reproductor, que muestra solo la actual.
+    miniLyric.textContent = current;
   }
 
   function setActive(index) {

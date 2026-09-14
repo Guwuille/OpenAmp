@@ -1,0 +1,124 @@
+/* Mini reproductor: la misma ventana encogida a lo imprescindible.
+   Que se vea el visualizador, la caratula y la letra es opcional, y la
+   ventana se reajusta de alto segun lo que quede visible. */
+
+.mini-only {
+  display: none;
+}
+
+#app-shell.mini-mode .mini-only {
+  display: flex;
+}
+
+#app-shell.mini-mode #library-panel,
+#app-shell.mini-mode #panel-equalizer,
+#app-shell.mini-mode #panel-lyrics,
+#app-shell.mini-mode #panel-playlist,
+#app-shell.mini-mode #titlebar-logo,
+#app-shell.mini-mode #btn-pin,
+#app-shell.mini-mode #btn-minimize,
+#app-shell.mini-mode #btn-maximize,
+#app-shell.mini-mode #track-format,
+#app-shell.mini-mode #balance-group,
+#app-shell.mini-mode #btn-shuffle,
+#app-shell.mini-mode #btn-repeat,
+#app-shell.mini-mode #btn-toggle-eq,
+#app-shell.mini-mode #btn-toggle-lyrics,
+#app-shell.mini-mode #btn-toggle-pl,
+#app-shell.mini-mode #btn-albumart-max,
+#app-shell.mini-mode #visualizer-tools,
+#app-shell.mini-mode #lyrics-overlay {
+  display: none !important;
+}
+
+#app-shell.mini-mode #titlebar {
+  height: 20px;
+  padding: 0 2px 0 4px;
+}
+
+#app-shell.mini-mode .titlebar-btn {
+  width: 16px;
+  height: 13px;
+  font-size: 8px;
+}
+
+#app-shell.mini-mode #panel-main {
+  padding: 4px;
+  gap: 4px;
+  border-bottom: 0;
+}
+
+#app-shell.mini-mode #display-row {
+  gap: 5px;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+#app-shell.mini-mode #album-art {
+  width: 34px;
+  height: 34px;
+}
+
+#app-shell.mini-mode #visualizer-wrap {
+  width: 58px;
+  height: 26px;
+}
+
+#app-shell.mini-mode #display-info {
+  padding: 2px 5px;
+  gap: 1px;
+}
+
+#app-shell.mini-mode #track-marquee {
+  height: 13px;
+  font-size: 10px;
+}
+
+#app-shell.mini-mode #time-display {
+  font-size: 10px;
+}
+
+#app-shell.mini-mode #seek-row input[type="range"] {
+  height: 8px;
+}
+
+#app-shell.mini-mode #transport-row {
+  gap: 2px;
+  flex-wrap: nowrap;
+}
+
+#app-shell.mini-mode .transport-btn {
+  width: 26px;
+  height: 18px;
+  font-size: 8px;
+}
+
+#app-shell.mini-mode .slider-group input {
+  width: 52px;
+}
+
+/* ── Partes opcionales ────────────────────────────────────────────────── */
+
+#mini-lyric {
+  display: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  /* Alto fijo: si dependiera del contenido, la ventana se reajustaria sola
+     al aparecer la primera linea y daria un salto a mitad de la cancion. */
+  height: 13px;
+  line-height: 13px;
+}
+
+#app-shell.mini-mode.mini-lyrics #mini-lyric {
+  display: block;
+}
+
+#app-shell.mini-mode.mini-no-visualizer #visualizer-wrap {
+  display: none;
+}
+
+#app-shell.mini-mode.mini-no-art #album-art {
+  display: none;
+}

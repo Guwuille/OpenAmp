@@ -7,6 +7,7 @@ const registerPlaylistsIpc = require('./ipc/playlists.ipc');
 const registerDialogsIpc = require('./ipc/dialogs.ipc');
 const registerWindowIpc = require('./ipc/window.ipc');
 const registerLyricsIpc = require('./ipc/lyrics.ipc');
+const registerPlayerIpc = require('./ipc/player.ipc');
 const settingsStore = require('./settingsStore');
 
 let mainWindow = null;
@@ -112,13 +113,18 @@ app.whenReady().then(() => {
   registerDialogsIpc();
   registerWindowIpc(() => mainWindow);
   registerLyricsIpc();
+  const player = registerPlayerIpc(() => mainWindow);
 
   createWindow();
   createTray();
 
   // El reescaneo de arranque avisa por IPC, asi que hay que esperar a que el
-  // renderer este listo o el mensaje se pierde.
-  mainWindow.webContents.once('did-finish-load', () => library.start());
+  // renderer este listo o el mensaje se pierde. Los botones de la miniatura
+  // tambien necesitan la ventana ya creada.
+  mainWindow.webContents.once('did-finish-load', () => {
+    library.start();
+    player.init();
+  });
   app.on('before-quit', () => library.stop());
 
   app.on('activate', () => {

@@ -1,5 +1,8 @@
-export function initTitlebar() {
+export function initTitlebar({ onMinimize } = {}) {
   document.getElementById('btn-minimize').addEventListener('click', () => {
+    // Con la opcion activada, minimizar abre el mini reproductor en vez de
+    // mandar la app a la barra de tareas.
+    if (onMinimize && onMinimize()) return;
     window.api.window.minimize();
   });
 

@@ -23,6 +23,9 @@ const state = {
   lyricsAutoFetch: true,
   visualizerMode: false,
   visualizerFullscreen: false,
+  miniMode: false,
+  miniOptions: { visualizer: true, art: true, lyrics: false },
+  minimizeToMini: false,
   libraryGroupBy: 'album',
   librarySortBy: 'track',
   librarySortDir: 'asc'

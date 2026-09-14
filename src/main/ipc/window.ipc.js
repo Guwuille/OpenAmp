@@ -1,7 +1,51 @@
 const { ipcMain } = require('electron');
 const settingsStore = require('../settingsStore');
 
+const NORMAL_MIN_WIDTH = 660;
+const NORMAL_MIN_HEIGHT = 380;
+
 function registerWindowIpc(getMainWindow) {
+  // Lo que habia antes de encoger, para poder devolver la ventana tal cual
+  // estaba al salir del mini reproductor.
+  let beforeMini = null;
+
+  ipcMain.handle('window:setMiniMode', (event, { enabled, width, height } = {}) => {
+    const win = getMainWindow();
+    if (!win) return false;
+
+    if (enabled) {
+      if (!beforeMini) {
+        beforeMini = {
+          bounds: win.getNormalBounds(),
+          maximized: win.isMaximized(),
+          alwaysOnTop: win.isAlwaysOnTop()
+        };
+      }
+      if (win.isFullScreen()) win.setFullScreen(false);
+      if (win.isMaximized()) win.unmaximize();
+
+      const w = Math.max(240, Math.round(width || 360));
+      const h = Math.max(72, Math.round(height || 120));
+      // El minimo normal es mas grande que el mini reproductor, asi que hay
+      // que bajarlo antes de encoger o la ventana no llega al tamano pedido.
+      win.setMinimumSize(w, h);
+      win.setSize(w, h, false);
+      // Un mini reproductor tapado por otra ventana no sirve de nada.
+      win.setAlwaysOnTop(true);
+      return true;
+    }
+
+    const previous = beforeMini;
+    beforeMini = null;
+    win.setMinimumSize(NORMAL_MIN_WIDTH, NORMAL_MIN_HEIGHT);
+    if (previous) {
+      win.setBounds(previous.bounds);
+      win.setAlwaysOnTop(previous.alwaysOnTop);
+      if (previous.maximized) win.maximize();
+    }
+    return false;
+  });
+
   ipcMain.handle('window:minimize', () => {
     getMainWindow()?.minimize();
   });

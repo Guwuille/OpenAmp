@@ -212,4 +212,14 @@ export function initMainPanel({ playback, visualizer }) {
 
   store.subscribe(render);
   render();
+
+  return {
+    // Lo usa el mini reproductor: los dos modos se pelean por el tamano de la
+    // ventana, asi que entrar en uno tiene que sacar del otro.
+    exitVisualizerMode() {
+      if (!visualizerMode) return;
+      if (fullscreen) setFullscreen(false);
+      setVisualizerMode(false);
+    }
+  };
 }

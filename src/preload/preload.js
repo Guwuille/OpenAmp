@@ -43,6 +43,10 @@ contextBridge.exposeInMainWorld('api', {
     hasSidecar: (trackPath) => ipcRenderer.invoke('lyrics:hasSidecar', trackPath),
     fetchOnline: (query) => ipcRenderer.invoke('lyrics:fetchOnline', query)
   },
+  player: {
+    setState: (state) => ipcRenderer.invoke('player:setState', state),
+    onCommand: (cb) => on('player:command', cb)
+  },
   settings: {
     get: (key) => ipcRenderer.invoke('settings:get', key),
     set: (key, value) => ipcRenderer.invoke('settings:set', { key, value })
@@ -57,6 +61,7 @@ contextBridge.exposeInMainWorld('api', {
     toggleMaximize: () => ipcRenderer.invoke('window:toggleMaximize'),
     isMaximized: () => ipcRenderer.invoke('window:isMaximized'),
     onMaximizeChange: (cb) => on('window:maximizeChange', cb),
+    setMiniMode: (options) => ipcRenderer.invoke('window:setMiniMode', options),
     getSize: () => ipcRenderer.invoke('window:getSize'),
     resizeToFitPanels: (width, height) => ipcRenderer.invoke('window:resizeToFitPanels', { width, height })
   }
