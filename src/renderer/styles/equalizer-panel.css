@@ -1,0 +1,45 @@
+#panel-equalizer {
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--chrome-border);
+  padding-bottom: 6px;
+}
+
+#eq-bands {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  align-items: flex-start;
+}
+
+#eq-band-container {
+  display: flex;
+  gap: 10px;
+}
+
+.eq-band {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 26px;
+  height: 120px;
+  justify-content: space-between;
+}
+
+.eq-band input[type="range"] {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 18px;
+  height: 96px;
+  margin: 0;
+}
+
+.eq-band label {
+  font-size: 9px;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+#eq-preamp-band {
+  border-right: 1px solid var(--chrome-border);
+  padding-right: 10px;
+}

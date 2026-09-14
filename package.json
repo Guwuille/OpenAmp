@@ -1,0 +1,47 @@
+{
+  "name": "openamp",
+  "productName": "OpenAmp",
+  "version": "0.1.0",
+  "description": "Reproductor de musica de escritorio al estilo Winamp clasico, con soporte FLAC.",
+  "main": "src/main/index.js",
+  "author": "",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "postinstall": "electron-builder install-app-deps",
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "electron-store": "8.2.0",
+    "music-metadata": "^10.6.4"
+  },
+  "devDependencies": {
+    "electron": "^34.0.1",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.openamp.player",
+    "productName": "OpenAmp",
+    "files": [
+      "src/**/*",
+      "!src/**/*.test.js"
+    ],
+    "directories": {
+      "buildResources": "build"
+    },
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ],
+      "icon": "build/icon.ico",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}

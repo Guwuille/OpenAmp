@@ -1,0 +1,501 @@
+/* ================================================================
+   TEMA GUWUSOFT  ·  chrome XP Luna naranja + maquina Winamp verde
+   ================================================================ */
+
+:root {
+  /* Paleta guwusoft */
+  --wall: #050200;
+  --fg: #e8dfc8;
+  --orange: #ff8300;
+  --orange-dk: #cc4400;
+  --orange-lt: #ffaa44;
+  --gold: #ffcc00;
+
+  --luna-title: linear-gradient(180deg, #ffc060 0%, #ff8300 28%, #cc4400 62%, #881e00 100%);
+  --luna-border: rgba(255, 145, 45, .55);
+  --luna-hi: rgba(255, 215, 140, .6);
+  --luna-lo: rgba(100, 28, 0, .85);
+  --glass: rgba(8, 3, 0, .82);
+
+  /* Maquina verde (LCD / transporte / playlist) */
+  --crt-bg: #0d130d;
+  --crt-deep: #000d00;
+  --crt-line: #0a2a0a;
+  --neon: #aaff00;
+  --neon-dim: rgba(0, 220, 80, .55);
+
+  /* Alias usados por el resto de hojas */
+  --chrome-dark: #0b0502;
+  --chrome-mid: #140803;
+  --chrome-light: #2a1408;
+  --chrome-border: rgba(255, 131, 0, .22);
+  --lcd-bg: var(--crt-deep);
+  --lcd-fg: var(--neon);
+  --lcd-fg-dim: var(--neon-dim);
+  --accent-amber: var(--gold);
+  --text-light: var(--fg);
+}
+
+html, body {
+  background: var(--wall);
+  color: var(--fg);
+  font-family: Tahoma, Verdana, 'Segoe UI', sans-serif;
+}
+
+/* Fondo: brasa tenue + polvo de estrellas, como el escritorio del sitio */
+body {
+  background-image:
+    radial-gradient(1px 1px at 14% 26%, rgba(255, 180, 60, .55) 0%, transparent 100%),
+    radial-gradient(1px 1px at 72% 62%, rgba(255, 255, 255, .35) 0%, transparent 100%),
+    radial-gradient(1px 1px at 41% 84%, rgba(255, 131, 0, .45) 0%, transparent 100%),
+    radial-gradient(ellipse 120% 90% at 50% 120%, rgba(150, 45, 0, .35) 0%, transparent 70%),
+    linear-gradient(180deg, #0a0400 0%, #050200 100%);
+  background-size: 200px 160px, 200px 160px, 200px 160px, 100% 100%, 100% 100%;
+}
+
+/* Scanlines CRT sobre toda la ventana */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent, transparent 2px,
+    rgba(0, 0, 0, .055) 2px, rgba(0, 0, 0, .055) 4px
+  );
+}
+
+#app-shell {
+  border: 1px solid var(--luna-border);
+  border-top-color: var(--luna-hi);
+  background: var(--glass);
+}
+
+/* ── Barra de titulo XP Luna ──────────────────────────────────── */
+
+#titlebar {
+  background: var(--luna-title);
+  border-bottom: 1px solid var(--luna-lo);
+  border-top: 1px solid rgba(255, 215, 140, .6);
+  box-shadow: inset 0 1px 0 rgba(255, 225, 155, .4);
+  padding: 0 4px 0 6px;
+  gap: 2px;
+}
+
+#titlebar-logo {
+  color: #fff;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: .4px;
+  text-shadow: 1px 1px 0 rgba(80, 0, 0, .65), 0 0 3px rgba(255, 200, 100, .2);
+}
+
+#titlebar-logo::before {
+  content: "\25C6";
+  font-size: 7px;
+  color: rgba(255, 255, 255, .6);
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.titlebar-btn {
+  width: 18px;
+  height: 15px;
+  margin-left: 1px;
+  padding: 0;
+  line-height: 1;
+  font-size: 9px;
+  font-family: 'Segoe UI Symbol', Arial, monospace;
+  color: rgba(255, 255, 255, .9);
+  background: rgba(0, 0, 0, .22);
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-bottom-color: rgba(0, 0, 0, .3);
+  border-right-color: rgba(0, 0, 0, .25);
+  border-radius: 1px;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, .5);
+  transition: background .08s;
+}
+
+.titlebar-btn:hover {
+  background: rgba(255, 255, 255, .2);
+}
+
+.titlebar-btn:active {
+  background: rgba(0, 0, 0, .35);
+}
+
+.titlebar-btn.active {
+  background: rgba(255, 220, 120, .85);
+  color: #4a1500;
+  text-shadow: none;
+}
+
+#btn-close:hover {
+  background: rgba(180, 0, 0, .75);
+}
+
+/* ── Botones perla XP (biblioteca y cabeceras) ────────────────── */
+
+#library-toolbar button,
+.panel-header button {
+  padding: 3px 9px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 140, 40, .75);
+  border-top-color: rgba(255, 210, 130, .8);
+  border-bottom-color: rgba(100, 28, 0, .85);
+  color: #fff;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: .2px;
+  cursor: pointer;
+  background: linear-gradient(180deg,
+    rgba(255, 175, 80, .92) 0%,
+    rgba(255, 100, 5, .88) 45%,
+    rgba(180, 40, 0, .92) 100%);
+  text-shadow: 1px 1px 0 rgba(80, 0, 0, .55);
+  box-shadow: inset 0 1px 0 rgba(255, 225, 155, .4), 0 1px 4px rgba(0, 0, 0, .5);
+  transition: background .12s, box-shadow .12s;
+}
+
+#library-toolbar button:hover,
+.panel-header button:hover {
+  background: linear-gradient(180deg,
+    rgba(255, 205, 100, .95) 0%,
+    rgba(255, 130, 20, .92) 45%,
+    rgba(200, 60, 0, .92) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 235, 165, .5), 0 0 10px rgba(255, 131, 0, .35), 0 1px 4px rgba(0, 0, 0, .5);
+}
+
+#library-toolbar button:active,
+.panel-header button:active {
+  background: linear-gradient(180deg, rgba(140, 28, 0, .92) 0%, rgba(200, 68, 0, .92) 100%);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, .5);
+}
+
+.panel-header select,
+#library-search {
+  background: rgba(0, 0, 0, .55);
+  color: var(--orange-lt);
+  border: 1px solid rgba(255, 131, 0, .4);
+  border-radius: 2px;
+  padding: 2px 4px;
+  outline: none;
+}
+
+#library-search:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 6px rgba(255, 131, 0, .35);
+}
+
+#library-search::placeholder {
+  color: rgba(232, 223, 200, .35);
+}
+
+/* ── Panel de biblioteca ──────────────────────────────────────── */
+
+#library-panel {
+  background: rgba(10, 4, 0, .72);
+  border-right: 1px solid rgba(255, 131, 0, .25);
+}
+
+#library-list {
+  background: transparent;
+}
+
+#library-scan-status {
+  padding: 3px 8px;
+  font-size: 10px;
+  color: var(--gold);
+  background: rgba(255, 131, 0, .08);
+  border-bottom: 1px solid rgba(255, 131, 0, .18);
+}
+
+#library-list .track-row {
+  color: var(--fg);
+  border-radius: 2px;
+}
+
+#library-list .track-row:hover {
+  background: rgba(255, 131, 0, .16);
+}
+
+#library-list .track-row.playing {
+  color: var(--gold);
+  text-shadow: 0 0 6px rgba(255, 204, 0, .45);
+}
+
+.group-header {
+  color: var(--orange-lt);
+  background: linear-gradient(180deg, rgba(255, 131, 0, .18), rgba(255, 131, 0, .05));
+  border-top: 1px solid rgba(255, 131, 0, .15);
+  border-bottom: 1px solid rgba(255, 131, 0, .15);
+  letter-spacing: .3px;
+}
+
+.group-thumb,
+.pl-thumb {
+  border: 1px solid rgba(255, 131, 0, .3);
+}
+
+/* ── Cabeceras de panel ───────────────────────────────────────── */
+
+.panel-header {
+  background: linear-gradient(180deg, rgba(255, 131, 0, .26), rgba(255, 131, 0, .06));
+  border-bottom: 1px solid rgba(255, 131, 0, .35);
+  color: #ffd7a0;
+  font-weight: bold;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, .6);
+}
+
+/* ── La maquina: paneles oscuros, verde CRT solo en el display ── */
+
+#main-area {
+  background: rgba(10, 4, 0, .55);
+}
+
+#panel-main {
+  background: linear-gradient(180deg, rgba(26, 12, 4, .85), rgba(12, 5, 1, .9));
+  border-bottom: 1px solid rgba(255, 131, 0, .22);
+}
+
+/* Una sola pantalla LCD que agrupa marquesina, tiempo y formato */
+#display-info {
+  background: var(--crt-deep);
+  border: 1px solid #0f3a0f;
+  border-radius: 2px;
+  padding: 4px 6px;
+  box-shadow: inset 0 0 14px rgba(0, 255, 80, .07);
+}
+
+.lcd-text {
+  background: transparent;
+  border: 0;
+  color: var(--neon);
+  font-family: 'Consolas', 'Courier New', monospace;
+  letter-spacing: 1px;
+  text-shadow: 0 0 6px rgba(170, 255, 0, .55);
+}
+
+#track-marquee {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+#time-display {
+  color: #00dd00;
+  text-shadow: 0 0 6px #00dd00, 0 0 14px rgba(0, 153, 0, .8);
+}
+
+#track-format {
+  color: rgba(0, 220, 80, .7);
+  text-shadow: none;
+}
+
+#album-art {
+  background: #050d05;
+  border: 1px solid var(--crt-line);
+}
+
+#album-art img {
+  filter: sepia(.45) contrast(1.08) brightness(.85) saturate(.7);
+}
+
+#visualizer {
+  background: var(--crt-deep);
+  border: 1px solid #0f3a0f;
+  image-rendering: pixelated;
+}
+
+#btn-albumart-max,
+#btn-visualizer-max {
+  background: rgba(0, 20, 0, .8);
+  border: 1px solid #1a4a10;
+  color: var(--neon);
+}
+
+/* Transporte estilo Winamp 2.x */
+
+.transport-btn,
+.toggle-btn {
+  background: linear-gradient(180deg, #182814 0%, #0c1508 100%);
+  border: 1px solid #1a3a10;
+  border-top-color: #2a5018;
+  border-left-color: #224014;
+  border-radius: 2px;
+  color: var(--neon);
+  cursor: pointer;
+  line-height: 1;
+  text-shadow: 0 0 4px rgba(136, 204, 0, .8);
+  transition: color .08s, background .08s, box-shadow .08s;
+}
+
+.transport-btn:hover,
+.toggle-btn:hover {
+  color: #ccff44;
+  background: linear-gradient(180deg, #254020 0%, #162a0e 100%);
+  text-shadow: 0 0 8px var(--neon);
+}
+
+.transport-btn:active,
+.toggle-btn:active {
+  border-top-color: #0c1508;
+  border-left-color: #0c1508;
+  border-bottom-color: #2a5018;
+  border-right-color: #224014;
+}
+
+#btn-play {
+  color: #00ff44;
+  text-shadow: 0 0 6px #00ff44;
+}
+
+.toggle-btn.active {
+  background: linear-gradient(180deg, #3d6b10 0%, #1d3a06 100%);
+  border-color: #66ff00;
+  color: #ccff66;
+  box-shadow: inset 0 0 8px rgba(102, 255, 0, .25), 0 0 6px rgba(102, 255, 0, .3);
+}
+
+.slider-group label {
+  color: var(--neon);
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px rgba(170, 255, 0, .7);
+}
+
+/* Sliders neon */
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #0a1a0a;
+  border: 1px solid #0f3a0f;
+  border-radius: 0;
+  outline: none;
+  margin: 0;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  background: transparent;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 8px;
+  height: 14px;
+  border-radius: 0;
+  background: linear-gradient(180deg, #aaff00, #44aa00);
+  border: 1px solid #66ff00;
+  box-shadow: 0 0 3px #66ff00;
+  cursor: pointer;
+}
+
+input[type="range"]:active::-webkit-slider-thumb {
+  background: linear-gradient(180deg, #ffcc00, #cc6600);
+  border-color: var(--gold);
+  box-shadow: 0 0 6px var(--gold);
+}
+
+#seek-row input[type="range"] {
+  height: 10px;
+}
+
+.slider-group input[type="range"] {
+  height: 10px;
+}
+
+/* Ecualizador */
+
+#panel-equalizer {
+  background: rgba(8, 3, 0, .5);
+  border-bottom: 1px solid rgba(255, 131, 0, .22);
+}
+
+.eq-band label {
+  color: rgba(255, 180, 100, .6);
+  font-size: 9px;
+  letter-spacing: .3px;
+}
+
+.eq-band input[type="range"]::-webkit-slider-thumb {
+  width: 16px;
+  height: 10px;
+}
+
+#eq-preamp-band {
+  border-right: 1px solid rgba(255, 131, 0, .2);
+}
+
+/* Playlist */
+
+#panel-playlist {
+  background: rgba(6, 2, 0, .5);
+}
+
+#playlist-list {
+  background: transparent;
+  font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.pl-row {
+  color: rgba(232, 223, 200, .82);
+  border-radius: 2px;
+}
+
+.pl-row .pl-index {
+  color: rgba(255, 160, 70, .55);
+  opacity: 1;
+}
+
+.pl-row:hover {
+  background: rgba(255, 131, 0, .14);
+  color: var(--fg);
+}
+
+.pl-row.playing {
+  color: var(--neon);
+  text-shadow: 0 0 6px rgba(170, 255, 0, .6);
+}
+
+.pl-row.drag-over {
+  border-top: 2px solid var(--neon);
+}
+
+#playlist-list.drop-target {
+  outline: 1px dashed var(--neon);
+  outline-offset: -2px;
+}
+
+/* ── Barras de desplazamiento ─────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 3, 0, .9);
+  border-left: 1px solid rgba(255, 131, 0, .2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff8300, #992200);
+  border: 1px solid #cc5500;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ffaa44, #cc3300);
+}
+
+::-webkit-scrollbar-corner {
+  background: rgba(10, 3, 0, .9);
+}

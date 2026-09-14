@@ -1,0 +1,38 @@
+import { createEventBus } from '../lib/eventBus.js';
+
+const bus = createEventBus();
+
+const state = {
+  tracks: [],
+  folders: [],
+  playlists: [],
+  activePlaylistId: null,
+  queue: [],
+  queueIndex: -1,
+  currentTrack: null,
+  isPlaying: false,
+  currentTime: 0,
+  duration: 0,
+  volume: 0.8,
+  balance: 0,
+  shuffle: false,
+  repeat: 'none',
+  eq: { enabled: true, preamp: 0, bands: new Array(10).fill(0), preset: 'Flat' },
+  visiblePanels: { playlist: true, equalizer: false },
+  librarySearch: ''
+};
+
+function getState() {
+  return state;
+}
+
+function setState(patch) {
+  Object.assign(state, patch);
+  bus.emit('change', state);
+}
+
+function subscribe(handler) {
+  return bus.on('change', handler);
+}
+
+export const store = { getState, setState, subscribe };

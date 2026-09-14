@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: file:; media-src 'self' file:;" />
+<title>OpenAmp</title>
+<link rel="stylesheet" href="styles/base.css" />
+<link rel="stylesheet" href="styles/main-panel.css" />
+<link rel="stylesheet" href="styles/playlist-panel.css" />
+<link rel="stylesheet" href="styles/equalizer-panel.css" />
+<link rel="stylesheet" href="styles/theme-guwusoft.css" />
+</head>
+<body>
+  <div id="app-shell">
+
+    <div id="titlebar">
+      <span id="titlebar-logo">OpenAmp</span>
+      <div id="titlebar-drag"></div>
+      <button id="btn-pin" class="titlebar-btn" title="Siempre visible">P</button>
+      <button id="btn-minimize" class="titlebar-btn" title="Minimizar">&#9472;</button>
+      <button id="btn-close" class="titlebar-btn" title="Cerrar">&#10005;</button>
+    </div>
+
+    <div id="app-body">
+
+      <aside id="library-panel">
+        <div class="panel-header">BIBLIOTECA</div>
+        <div id="library-toolbar">
+          <input id="library-search" type="text" placeholder="Buscar..." />
+          <button id="btn-add-folder" title="Agregar carpeta">+ Carpeta</button>
+          <button id="btn-open-files" title="Abrir archivos">Abrir</button>
+        </div>
+        <div id="library-scan-status" class="hidden"></div>
+        <div id="library-list"></div>
+      </aside>
+
+      <main id="main-area">
+
+        <section id="panel-main">
+          <div id="display-row">
+            <div id="album-art">
+              <img id="album-art-img" alt="" />
+              <button id="btn-albumart-max" title="Agrandar caratula">&#9635;</button>
+            </div>
+            <div id="visualizer-wrap">
+              <canvas id="visualizer" width="76" height="32"></canvas>
+              <button id="btn-visualizer-max" title="Maximizar visualizador">&#9635;</button>
+            </div>
+            <div id="display-info">
+              <div id="track-marquee" class="lcd-text"></div>
+              <div id="time-row">
+                <span id="time-display" class="lcd-text">00:00 / 00:00</span>
+                <span id="track-format" class="lcd-text"></span>
+              </div>
+            </div>
+          </div>
+
+          <div id="seek-row">
+            <input id="seek-bar" type="range" min="0" max="1000" value="0" />
+          </div>
+
+          <div id="transport-row">
+            <button id="btn-prev" class="transport-btn" title="Anterior">&#9664;&#9664;</button>
+            <button id="btn-play" class="transport-btn" title="Reproducir">&#9654;</button>
+            <button id="btn-pause" class="transport-btn" title="Pausar">&#10074;&#10074;</button>
+            <button id="btn-stop" class="transport-btn" title="Detener">&#9632;</button>
+            <button id="btn-next" class="transport-btn" title="Siguiente">&#9654;&#9654;</button>
+
+            <button id="btn-shuffle" class="toggle-btn" title="Aleatorio">SHUF</button>
+            <button id="btn-repeat" class="toggle-btn" title="Repetir">REP</button>
+
+            <div class="slider-group">
+              <label>VOL</label>
+              <input id="volume-slider" type="range" min="0" max="100" value="80" />
+            </div>
+            <div class="slider-group">
+              <label>BAL</label>
+              <input id="balance-slider" type="range" min="-100" max="100" value="0" />
+            </div>
+
+            <button id="btn-toggle-eq" class="toggle-btn" title="Ecualizador">EQ</button>
+            <button id="btn-toggle-pl" class="toggle-btn active" title="Playlist">PL</button>
+          </div>
+        </section>
+
+        <section id="panel-equalizer" class="hidden">
+          <div class="panel-header">
+            ECUALIZADOR
+            <select id="eq-preset-select"></select>
+            <button id="btn-eq-enable" class="toggle-btn active">ON</button>
+          </div>
+          <div id="eq-bands">
+            <div class="eq-band" id="eq-preamp-band">
+              <input type="range" min="-12" max="12" value="0" step="1" orient="vertical" />
+              <label>PRE</label>
+            </div>
+            <div id="eq-band-container"></div>
+          </div>
+        </section>
+
+        <section id="panel-playlist">
+          <div class="panel-header">
+            <select id="playlist-select"></select>
+            <button id="btn-playlist-new" title="Nueva playlist">Nueva</button>
+            <button id="btn-playlist-rename" title="Renombrar">Renombrar</button>
+            <button id="btn-playlist-delete" title="Borrar">Borrar</button>
+            <button id="btn-playlist-export" title="Exportar M3U">Exportar</button>
+            <button id="btn-playlist-import" title="Importar M3U">Importar</button>
+          </div>
+          <div id="playlist-list"></div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

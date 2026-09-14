@@ -1,0 +1,51 @@
+const { contextBridge, ipcRenderer } = require('electron');
+
+function on(channel, callback) {
+  const listener = (event, payload) => callback(payload);
+  ipcRenderer.on(channel, listener);
+  return () => ipcRenderer.removeListener(channel, listener);
+}
+
+contextBridge.exposeInMainWorld('api', {
+  library: {
+    addFolders: (folderPaths) => ipcRenderer.invoke('library:addFolders', folderPaths),
+    getAllTracks: () => ipcRenderer.invoke('library:getAllTracks'),
+    getFolders: () => ipcRenderer.invoke('library:getFolders'),
+    removeFolder: (folderId) => ipcRenderer.invoke('library:removeFolder', folderId),
+    rescan: (folderId) => ipcRenderer.invoke('library:rescan', folderId),
+    onScanProgress: (cb) => on('library:scanProgress', cb),
+    onScanComplete: (cb) => on('library:scanComplete', cb),
+    onScanError: (cb) => on('library:scanError', cb)
+  },
+  playlists: {
+    getAll: () => ipcRenderer.invoke('playlists:getAll'),
+    create: (name) => ipcRenderer.invoke('playlists:create', name),
+    rename: (id, name) => ipcRenderer.invoke('playlists:rename', { id, name }),
+    delete: (id) => ipcRenderer.invoke('playlists:delete', id),
+    addTracks: (playlistId, trackIds, atPosition) =>
+      ipcRenderer.invoke('playlists:addTracks', { playlistId, trackIds, atPosition }),
+    removeTrack: (playlistId, playlistTrackId) =>
+      ipcRenderer.invoke('playlists:removeTrack', { playlistId, playlistTrackId }),
+    reorder: (playlistId, orderedIds) => ipcRenderer.invoke('playlists:reorder', { playlistId, orderedIds }),
+    exportM3U: (playlistId, filePath) => ipcRenderer.invoke('playlists:exportM3U', { playlistId, filePath }),
+    importM3U: (filePath) => ipcRenderer.invoke('playlists:importM3U', filePath)
+  },
+  dialogs: {
+    selectFolders: () => ipcRenderer.invoke('dialog:selectFolders'),
+    selectAudioFiles: () => ipcRenderer.invoke('dialog:selectAudioFiles'),
+    selectSaveM3U: (defaultName) => ipcRenderer.invoke('dialog:selectSaveM3U', defaultName),
+    selectOpenM3U: () => ipcRenderer.invoke('dialog:selectOpenM3U')
+  },
+  settings: {
+    get: (key) => ipcRenderer.invoke('settings:get', key),
+    set: (key, value) => ipcRenderer.invoke('settings:set', { key, value })
+  },
+  window: {
+    minimize: () => ipcRenderer.invoke('window:minimize'),
+    close: () => ipcRenderer.invoke('window:close'),
+    setAlwaysOnTop: (value) => ipcRenderer.invoke('window:setAlwaysOnTop', value),
+    isAlwaysOnTop: () => ipcRenderer.invoke('window:isAlwaysOnTop'),
+    getSize: () => ipcRenderer.invoke('window:getSize'),
+    resizeToFitPanels: (width, height) => ipcRenderer.invoke('window:resizeToFitPanels', { width, height })
+  }
+});
