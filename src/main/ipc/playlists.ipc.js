@@ -9,7 +9,11 @@ function registerPlaylistsIpc() {
   ipcMain.handle('playlists:create', (event, name) => playlistsRepo.createPlaylist(name));
 
   ipcMain.handle('playlists:rename', (event, { id, name }) => {
-    playlistsRepo.renamePlaylist(id, name);
+    // La interfaz ya filtra, pero una playlist sin nombre queda invisible en
+    // el desplegable y no habria forma de volver a seleccionarla.
+    const limpio = typeof name === 'string' ? name.trim().slice(0, 80) : '';
+    if (!limpio) return false;
+    playlistsRepo.renamePlaylist(id, limpio);
     return true;
   });
 

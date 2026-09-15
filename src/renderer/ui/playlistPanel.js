@@ -4,6 +4,7 @@ import { toFileUrl } from '../lib/fileUrl.js';
 
 export function initPlaylistPanel({ onPlayTrack }) {
   const selectEl = document.getElementById('playlist-select');
+  const renameInput = document.getElementById('playlist-rename-input');
   const listEl = document.getElementById('playlist-list');
   const newBtn = document.getElementById('btn-playlist-new');
   const renameBtn = document.getElementById('btn-playlist-rename');
@@ -167,14 +168,76 @@ export function initPlaylistPanel({ onPlayTrack }) {
     store.setState({ playlists, activePlaylistId: created.id });
   });
 
-  renameBtn.addEventListener('click', async () => {
+  // Renombrado en linea. Antes esto usaba prompt(), que en Electron existe
+  // pero lanza "prompt() is not supported.": el boton reventaba apenas se
+  // tocaba y no pasaba nada. Ademas, en una cabecera tan compacta un campo
+  // que reemplaza al desplegable se lee mejor que un dialogo.
+  let renamingId = null;
+
+  function stopRename() {
+    renamingId = null;
+    renameInput.classList.add('hidden');
+    selectEl.classList.remove('hidden');
+  }
+
+  function startRename() {
     const playlist = getActivePlaylist();
-    if (!playlist) return;
-    const name = prompt('Nuevo nombre de playlist:', playlist.name);
-    if (!name) return;
-    await window.api.playlists.rename(playlist.id, name);
+    if (!playlist || renamingId !== null) return;
+    renamingId = playlist.id;
+    renameInput.value = playlist.name;
+    selectEl.classList.add('hidden');
+    renameInput.classList.remove('hidden');
+    renameInput.focus();
+    renameInput.select();
+  }
+
+  async function commitRename() {
+    if (renamingId === null) return;
+    const id = renamingId;
+    const name = renameInput.value.trim();
+    stopRename();
+
+    const playlist = store.getState().playlists.find((p) => p.id === id);
+    // Un nombre vacio o igual al anterior no amerita tocar la base.
+    if (!name || (playlist && name === playlist.name)) return;
+
+    await window.api.playlists.rename(id, name);
     await refreshPlaylists();
+  }
+
+  // mousedown y no click: el blur del campo ocurre entre ambos, asi que con
+  // click el boton confirmaria y acto seguido volveria a entrar en edicion.
+  // preventDefault evita que el foco se mueva, y por lo tanto el blur.
+  let ignorarProximoClic = false;
+
+  renameBtn.addEventListener('mousedown', (e) => {
+    if (renamingId === null) return;
+    e.preventDefault();
+    ignorarProximoClic = true;
+    commitRename();
   });
+
+  renameBtn.addEventListener('click', () => {
+    if (ignorarProximoClic) {
+      ignorarProximoClic = false;
+      return;
+    }
+    startRename();
+  });
+
+  renameInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      commitRename();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      stopRename();
+    }
+  });
+
+  // Al salir del campo se confirma, como en el explorador de archivos. El
+  // Escape ya limpio el estado, asi que el blur que provoca no hace nada.
+  renameInput.addEventListener('blur', () => commitRename());
 
   deleteBtn.addEventListener('click', async () => {
     const playlist = getActivePlaylist();

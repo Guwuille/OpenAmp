@@ -187,6 +187,7 @@ body::after {
 
 .panel-header select,
 #library-organize select,
+#playlist-rename-input,
 #library-search {
   background: rgba(0, 0, 0, .55);
   color: var(--orange-lt);

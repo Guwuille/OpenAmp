@@ -1,6 +1,15 @@
-#panel-playlist .panel-header select {
+#panel-playlist .panel-header select,
+#playlist-rename-input {
   flex: 1;
   min-width: 0;
+}
+
+/* El * de base.css desactiva la seleccion en toda la app; en un campo donde se
+   corrige un nombre hace falta. */
+#playlist-rename-input {
+  padding: 2px 4px;
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 .pl-row {
