@@ -133,13 +133,24 @@ const playback = {
   }
 };
 
+// Un archivo ilegible se saltea, pero una carpeta entera ilegible no deberia
+// quemar la cola: sin tope, cada fallo encadena el siguiente y la playlist se
+// recorre completa en milisegundos.
+const MAX_FALLOS_SEGUIDOS = 5;
+let fallosSeguidos = 0;
+
 audioEngine.on('timeupdate', ({ currentTime, duration }) => {
   store.setState({ currentTime, duration });
 });
 audioEngine.on('loadedmetadata', ({ duration, hasVideo }) => {
   store.setState({ duration, hasVideo: Boolean(hasVideo) });
 });
-audioEngine.on('play', () => store.setState({ isPlaying: true }));
+audioEngine.on('play', () => {
+  // Una reproduccion que arranca bien corta la racha: el tope solo debe
+  // dispararse con fallos consecutivos, no con fallos sueltos acumulados.
+  fallosSeguidos = 0;
+  store.setState({ isPlaying: true });
+});
 audioEngine.on('pause', () => store.setState({ isPlaying: false }));
 audioEngine.on('ended', () => {
   const { repeat } = store.getState();
@@ -152,6 +163,16 @@ audioEngine.on('ended', () => {
 });
 audioEngine.on('error', (err) => {
   console.error('Error de reproduccion:', err);
+  fallosSeguidos += 1;
+
+  if (fallosSeguidos >= MAX_FALLOS_SEGUIDOS) {
+    console.error(`Se detiene la reproduccion tras ${fallosSeguidos} archivos seguidos con error.`);
+    fallosSeguidos = 0;
+    audioEngine.stop();
+    store.setState({ isPlaying: false });
+    return;
+  }
+
   playback.next();
 });
 

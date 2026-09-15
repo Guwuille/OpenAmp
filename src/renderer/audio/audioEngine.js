@@ -47,7 +47,20 @@ export function createAudioEngine() {
   audioEl.addEventListener('ended', () => bus.emit('ended'));
   audioEl.addEventListener('play', () => bus.emit('play'));
   audioEl.addEventListener('pause', () => bus.emit('pause'));
-  audioEl.addEventListener('error', () => bus.emit('error', audioEl.error));
+  audioEl.addEventListener('error', () => {
+    const error = audioEl.error;
+
+    // Un aborto no es un fallo del archivo: ocurre cuando se empieza a cargar
+    // otra pista encima de una que todavia estaba cargando. Tratarlo como
+    // error hacia que elegir una cancion saltara a la siguiente.
+    if (!error || error.code === MediaError.MEDIA_ERR_ABORTED) return;
+
+    bus.emit('error', {
+      code: error.code,
+      message: error.message,
+      src: audioEl.currentSrc || audioEl.src
+    });
+  });
 
   function resumeContext() {
     if (audioContext.state === 'suspended') audioContext.resume();
