@@ -12,8 +12,8 @@ pantalla LCD verde neón para el reproductor.
 Los instaladores para Windows x64 están en la sección
 [Releases](../../releases):
 
-- **`OpenAmp Setup 0.1.0.exe`** — instalador, permite elegir la carpeta de destino.
-- **`OpenAmp 0.1.0.exe`** — portable, se ejecuta sin instalar.
+- **`OpenAmp Setup <version>.exe`** — instalador, permite elegir la carpeta de destino.
+- **`OpenAmp <version>.exe`** — portable, se ejecuta sin instalar.
 
 Los ejecutables no están firmados, así que la primera vez Windows SmartScreen
 muestra el aviso de "editor desconocido". Hay que entrar en *Más información >

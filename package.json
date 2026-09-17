@@ -1,7 +1,7 @@
 {
   "name": "openamp",
   "productName": "OpenAmp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Reproductor de musica de escritorio al estilo Winamp clasico, con soporte FLAC.",
   "main": "src/main/index.js",
   "author": "",
