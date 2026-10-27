@@ -13,6 +13,14 @@ const settingsStore = require('./settingsStore');
 let mainWindow = null;
 let tray = null;
 
+// Mismas extensiones que folderWatcher/scanner: lo que Windows puede mandar
+// como argumento al abrir un archivo de audio con OpenAmp.
+const AUDIO_EXTENSIONS = new Set(['.flac', '.mp3', '.wav', '.ogg', '.m4a', '.opus']);
+
+function extractAudioFilesFromArgv(argv) {
+  return argv.filter((arg) => AUDIO_EXTENSIONS.has(path.extname(arg).toLowerCase()));
+}
+
 function createTray() {
   const icon = nativeImage.createFromPath(ICON_PATH);
   tray = new Tray(icon.isEmpty() ? icon : icon.resize({ width: 16, height: 16 }));
@@ -102,43 +110,65 @@ function createWindow() {
 // Sin el, la app corriendo desde el codigo fuente aparece como Electron.
 if (process.platform === 'win32') app.setAppUserModelId('com.openamp.player');
 
-app.whenReady().then(() => {
-  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
-    callback({
-      responseHeaders: {
-        ...details.responseHeaders,
-        'Content-Security-Policy': [
-          "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: file:; media-src 'self' file:;"
-        ]
-      }
+// Si ya hay una instancia corriendo y el usuario abre otro archivo con
+// OpenAmp, Windows lanza una segunda instancia: la cerramos y le pasamos
+// el archivo a la que ya esta abierta via 'second-instance'.
+const gotSingleInstanceLock = app.requestSingleInstanceLock();
+if (!gotSingleInstanceLock) {
+  app.quit();
+} else {
+  app.on('second-instance', (event, argv) => {
+    if (!mainWindow) return;
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.show();
+    mainWindow.focus();
+
+    const files = extractAudioFilesFromArgv(argv);
+    if (files.length) mainWindow.webContents.send('player:openFiles', files);
+  });
+
+  app.whenReady().then(() => {
+    session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+      callback({
+        responseHeaders: {
+          ...details.responseHeaders,
+          'Content-Security-Policy': [
+            "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: file:; media-src 'self' file:;"
+          ]
+        }
+      });
+    });
+
+    getDatabase();
+
+    const library = registerLibraryIpc(() => mainWindow);
+    registerPlaylistsIpc();
+    registerDialogsIpc();
+    registerWindowIpc(() => mainWindow);
+    registerLyricsIpc();
+    const player = registerPlayerIpc(() => mainWindow);
+
+    createWindow();
+    createTray();
+
+    // El reescaneo de arranque avisa por IPC, asi que hay que esperar a que el
+    // renderer este listo o el mensaje se pierde. Los botones de la miniatura
+    // tambien necesitan la ventana ya creada, y lo mismo el archivo con el
+    // que se haya abierto OpenAmp (doble clic / "Abrir con" en Windows).
+    mainWindow.webContents.once('did-finish-load', () => {
+      library.start();
+      player.init();
+
+      const initialFiles = extractAudioFilesFromArgv(process.argv);
+      if (initialFiles.length) mainWindow.webContents.send('player:openFiles', initialFiles);
+    });
+    app.on('before-quit', () => library.stop());
+
+    app.on('activate', () => {
+      if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
   });
-
-  getDatabase();
-
-  const library = registerLibraryIpc(() => mainWindow);
-  registerPlaylistsIpc();
-  registerDialogsIpc();
-  registerWindowIpc(() => mainWindow);
-  registerLyricsIpc();
-  const player = registerPlayerIpc(() => mainWindow);
-
-  createWindow();
-  createTray();
-
-  // El reescaneo de arranque avisa por IPC, asi que hay que esperar a que el
-  // renderer este listo o el mensaje se pierde. Los botones de la miniatura
-  // tambien necesitan la ventana ya creada.
-  mainWindow.webContents.once('did-finish-load', () => {
-    library.start();
-    player.init();
-  });
-  app.on('before-quit', () => library.stop());
-
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
-});
+}
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();

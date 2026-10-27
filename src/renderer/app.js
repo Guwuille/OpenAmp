@@ -5,7 +5,7 @@ import { initTitlebar } from './ui/titlebar.js';
 import { initMainPanel } from './ui/mainPanel.js';
 import { initEqualizerPanel } from './ui/equalizerPanel.js';
 import { initPlaylistPanel } from './ui/playlistPanel.js';
-import { initLibraryBrowser } from './ui/libraryBrowser.js';
+import { initLibraryBrowser, filesToAdHocTracks } from './ui/libraryBrowser.js';
 import { initLyricsPanel } from './ui/lyricsPanel.js';
 import { initMiniPlayer } from './ui/miniPlayer.js';
 
@@ -227,6 +227,13 @@ async function bootstrap() {
     else if (command === 'next') playback.next();
     else if (command === 'play') playback.play();
     else if (command === 'pause') playback.pause();
+  });
+
+  // Archivo con el que se abrio OpenAmp (doble clic / "Abrir con" en
+  // Windows, o una segunda instancia redirigida a esta ventana).
+  window.api.player.onOpenFiles((filePaths) => {
+    if (!filePaths || filePaths.length === 0) return;
+    playback.playTrackAt(filesToAdHocTracks(filePaths), 0);
   });
 
   // El store emite en cada timeupdate, asi que solo se avisa al proceso

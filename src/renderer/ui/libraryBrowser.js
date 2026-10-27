@@ -16,6 +16,19 @@ function num(value) {
   return value == null || Number.isNaN(n) ? null : n;
 }
 
+// Convierte rutas sueltas (dialogo "Abrir archivos" o Windows "Abrir con")
+// en pistas reproducibles sin pasar por la biblioteca.
+export function filesToAdHocTracks(filePaths) {
+  return filePaths.map((filePath, i) => ({
+    id: `adhoc-${i}-${filePath}`,
+    file_path: filePath,
+    title: filePath.split(/[\\/]/).pop(),
+    artist: '',
+    album: '',
+    duration: 0
+  }));
+}
+
 const GROUPERS = {
   album: (t) => {
     // album_artist antes que artist: en recopilatorios cada pista tiene un
@@ -264,15 +277,7 @@ export function initLibraryBrowser({ onPlayTrack, onAddToActivePlaylist }) {
   openFilesBtn.addEventListener('click', async () => {
     const files = await window.api.dialogs.selectAudioFiles();
     if (!files || files.length === 0) return;
-    const adHocTracks = files.map((filePath, i) => ({
-      id: `adhoc-${i}-${filePath}`,
-      file_path: filePath,
-      title: filePath.split(/[\\/]/).pop(),
-      artist: '',
-      album: '',
-      duration: 0
-    }));
-    onPlayTrack(adHocTracks, 0);
+    onPlayTrack(filesToAdHocTracks(files), 0);
   });
 
   window.api.library.onScanProgress(({ scanned, total }) => {

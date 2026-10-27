@@ -45,7 +45,8 @@ contextBridge.exposeInMainWorld('api', {
   },
   player: {
     setState: (state) => ipcRenderer.invoke('player:setState', state),
-    onCommand: (cb) => on('player:command', cb)
+    onCommand: (cb) => on('player:command', cb),
+    onOpenFiles: (cb) => on('player:openFiles', cb)
   },
   settings: {
     get: (key) => ipcRenderer.invoke('settings:get', key),

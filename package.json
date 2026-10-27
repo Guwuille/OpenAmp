@@ -31,6 +31,15 @@
     "directories": {
       "buildResources": "build"
     },
+    "fileAssociations": [
+      {
+        "ext": ["mp3", "flac", "wav", "ogg", "m4a", "opus"],
+        "name": "Audio",
+        "description": "Archivo de audio",
+        "icon": "build/icon.ico",
+        "role": "Viewer"
+      }
+    ],
     "win": {
       "target": [
         { "target": "nsis", "arch": ["x64"] },
