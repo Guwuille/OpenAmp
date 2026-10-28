@@ -174,7 +174,9 @@ export function initCdPanel() {
       folderId: Number(carpetaSelect.value),
       artista: artistaInput.value.trim(),
       album: albumInput.value.trim(),
-      titulos: metadatos ? metadatos.pistas : null
+      titulos: metadatos ? metadatos.pistas : null,
+      // Sin esto no hay de donde sacar la portada: el disco no trae ninguna.
+      releaseId: metadatos ? metadatos.releaseId : null
     });
 
     if (!resultado || !resultado.ok) {

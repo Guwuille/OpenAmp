@@ -100,8 +100,10 @@ El botón **CD** de la biblioteca importa un disco a FLAC, con sus etiquetas, en
 la carpeta que elijas. Como esa carpeta ya está vigilada, las pistas aparecen
 solas en la lista a medida que se escriben.
 
-El botón **Datos** busca artista, álbum y títulos en
-[MusicBrainz](https://musicbrainz.org). El identificador se calcula a partir
+El botón **Datos** busca artista, álbum, títulos y portada en
+[MusicBrainz](https://musicbrainz.org) y
+[Cover Art Archive](https://coverartarchive.org). La portada queda embebida en
+cada pista, que es de donde la biblioteca lee la carátula. El identificador se calcula a partir
 del índice del disco, así que lo único que viaja es un hash de ese índice: no
 sale ningún dato del equipo. Si el disco no figura, podés escribir artista y
 álbum a mano y las pistas quedan como `Pista 01`, `Pista 02` y así.

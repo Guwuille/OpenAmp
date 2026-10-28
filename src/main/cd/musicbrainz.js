@@ -97,6 +97,8 @@ async function buscarPorDiscId(discId, pistasDelDisco) {
 
   return {
     ok: true,
+    // Lo necesita Cover Art Archive para traer la portada.
+    releaseId: release.id || null,
     artista: artistaAlbum,
     album: (release.title || '').trim(),
     fecha: release.date || '',

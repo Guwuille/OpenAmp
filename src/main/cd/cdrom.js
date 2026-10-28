@@ -5,7 +5,7 @@
 // alcanza para armar el indice completo al instante, sin invocar a ffmpeg ni
 // hacer girar el lector.
 
-const fs = require('node:fs');
+const fsp = require('node:fs/promises');
 const path = require('node:path');
 
 // Un CD de audio son 75 sectores por segundo.
@@ -20,8 +20,8 @@ const OFFSET_LARGO = 32;
 
 const TAMANO_CDA = 44;
 
-function leerStub(rutaArchivo) {
-  const datos = fs.readFileSync(rutaArchivo);
+async function leerStub(rutaArchivo) {
+  const datos = await fsp.readFile(rutaArchivo);
   if (datos.length < TAMANO_CDA) return null;
   if (datos.toString('ascii', 0, 4) !== 'RIFF') return null;
   if (datos.toString('ascii', 8, 12) !== 'CDDA') return null;
@@ -41,10 +41,10 @@ function leerStub(rutaArchivo) {
   };
 }
 
-function leerDisco(unidad) {
+async function leerDisco(unidad) {
   let entradas;
   try {
-    entradas = fs.readdirSync(unidad);
+    entradas = await fsp.readdir(unidad);
   } catch (err) {
     // Unidad vacia, abierta o todavia reconociendo el disco.
     return null;
@@ -56,7 +56,7 @@ function leerDisco(unidad) {
   const pistas = [];
   for (const nombre of stubs.sort()) {
     try {
-      const pista = leerStub(path.join(unidad, nombre));
+      const pista = await leerStub(path.join(unidad, nombre));
       if (pista) pistas.push(pista);
     } catch (err) {
       // Un stub ilegible no deberia invalidar el disco entero.
@@ -75,17 +75,21 @@ function leerDisco(unidad) {
 }
 
 // No hay API de Node para enumerar unidades, asi que se prueban las letras.
-// Es barato: una unidad ausente falla al instante.
-function listarDiscos() {
+//
+// Se hace de forma asincrona y en paralelo a proposito. Leyendo de forma
+// sincrona, una unidad lenta o recien despertada bloquea el proceso principal
+// entero, y con el toda la interfaz: se vio colgar varios minutos con el
+// lector recuperandose de una lectura interrumpida.
+async function listarDiscos() {
   if (process.platform !== 'win32') return [];
 
-  const discos = [];
+  const letras = [];
   for (let codigo = 'D'.charCodeAt(0); codigo <= 'Z'.charCodeAt(0); codigo++) {
-    const unidad = `${String.fromCharCode(codigo)}:\\`;
-    const disco = leerDisco(unidad);
-    if (disco) discos.push(disco);
+    letras.push(`${String.fromCharCode(codigo)}:\\`);
   }
-  return discos;
+
+  const resultados = await Promise.all(letras.map((unidad) => leerDisco(unidad)));
+  return resultados.filter(Boolean);
 }
 
 module.exports = { listarDiscos, leerDisco, FRAMES_POR_SEGUNDO };

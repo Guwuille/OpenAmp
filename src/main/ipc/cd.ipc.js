@@ -9,6 +9,7 @@ const { listarDiscos } = require('../cd/cdrom');
 const { resolverFfmpeg } = require('../cd/ffmpegPath');
 const { calcularDiscId } = require('../cd/discid');
 const { buscarPorDiscId } = require('../cd/musicbrainz');
+const { descargarPortada } = require('../cd/coverart');
 
 // La lectora ignoro los valores intermedios en las pruebas, pero con 24 dio
 // 3.5x contra 2.7x por defecto. Pedir de mas no rompe: el firmware recorta.
@@ -45,17 +46,17 @@ function registerCdIpc(getMainWindow) {
     if (win && !win.isDestroyed()) win.webContents.send(canal, datos);
   }
 
-  ipcMain.handle('cd:list', () => {
+  ipcMain.handle('cd:list', async () => {
     const ffmpeg = resolverFfmpeg({ refrescar: true });
     return {
       ffmpeg: { disponible: ffmpeg.disponible, carpeta: ffmpeg.carpeta },
-      discos: listarDiscos(),
+      discos: await listarDiscos(),
       importando: Boolean(enCurso)
     };
   });
 
   ipcMain.handle('cd:lookup', async (event, { unidad } = {}) => {
-    const disco = listarDiscos().find((d) => d.unidad === unidad);
+    const disco = (await listarDiscos()).find((d) => d.unidad === unidad);
     if (!disco) return { ok: false, error: 'No se encuentra el disco. Fijate que siga puesto.' };
 
     const discId = calcularDiscId(
@@ -69,7 +70,7 @@ function registerCdIpc(getMainWindow) {
   // terminar: el vigilante de carpetas ignora .part, asi que no intenta
   // indexar un archivo a medio escribir, y el rename final si dispara el
   // escaneo.
-  function extraerPista({ ffmpeg, unidad, pista, destino, titulo, artista, album, totalPistas, alProgreso }) {
+  function extraerPista({ ffmpeg, unidad, pista, destino, titulo, artista, album, portada, totalPistas, alProgreso }) {
     return new Promise((resolve, reject) => {
       const parcial = `${destino}.part`;
 
@@ -81,8 +82,27 @@ function registerCdIpc(getMainWindow) {
         '-ss', pista.inicio.toFixed(3),
         '-f', 'libcdio',
         // ffmpeg quiere la unidad sin barra final.
-        '-i', unidad.replace(/[\\/]+$/, ''),
-        '-t', pista.duracion.toFixed(3),
+        '-i', unidad.replace(/[\\/]+$/, '')
+      ];
+
+      // La portada entra como segunda entrada. El orden importa: -t tiene que
+      // ir despues de TODAS las entradas, porque entre dos -i se interpreta
+      // como opcion de la siguiente entrada y la pista se extraeria entera.
+      if (portada) args.push('-i', portada);
+
+      args.push('-t', pista.duracion.toFixed(3));
+
+      if (portada) {
+        args.push(
+          '-map', '0:a',
+          '-map', '1:v',
+          '-c:v', 'copy',
+          '-disposition:v:0', 'attached_pic',
+          '-metadata:s:v', 'comment=Cover (front)'
+        );
+      }
+
+      args.push(
         '-c:a', 'flac',
         // Hay que declarar el formato: ffmpeg lo deduce de la extension, y el
         // archivo se escribe como .flac.part para que el vigilante de
@@ -96,7 +116,7 @@ function registerCdIpc(getMainWindow) {
         '-nostats',
         '-y',
         parcial
-      ];
+      );
 
       const hijo = execFile(ffmpeg, args, { maxBuffer: 1024 * 1024 });
       enCurso = { hijo, parcial };
@@ -141,7 +161,7 @@ function registerCdIpc(getMainWindow) {
     });
   }
 
-  ipcMain.handle('cd:import', async (event, { unidad, folderId, artista, album, pistas, titulos } = {}) => {
+  ipcMain.handle('cd:import', async (event, { unidad, folderId, artista, album, pistas, titulos, releaseId } = {}) => {
     if (enCurso) return { ok: false, error: 'Ya hay una importacion en curso.' };
 
     const ffmpeg = resolverFfmpeg();
@@ -149,7 +169,7 @@ function registerCdIpc(getMainWindow) {
       return { ok: false, error: 'No se encontro ffmpeg, que es lo que lee el CD.', faltaFfmpeg: true };
     }
 
-    const disco = listarDiscos().find((d) => d.unidad === unidad);
+    const disco = (await listarDiscos()).find((d) => d.unidad === unidad);
     if (!disco) return { ok: false, error: 'No se encuentra el disco. Fijate que siga puesto.' };
 
     const carpeta = tracksRepo.getAllFolders().find((f) => f.id === folderId);
@@ -179,8 +199,19 @@ function registerCdIpc(getMainWindow) {
 
     (async () => {
       let importadas = 0;
+      let portada = null;
       try {
         await fsp.mkdir(destinoCarpeta, { recursive: true });
+
+        // Se baja una sola vez y se incrusta en cada pista. Si no hay portada
+        // o falla la descarga, se importa igual, sin imagen.
+        if (releaseId) {
+          enviar('cd:progress', {
+            pista: 0, indice: 0, total: seleccion.length,
+            avancePista: 0, avanceTotal: 0, etapa: 'portada'
+          });
+          portada = await descargarPortada(releaseId, path.join(destinoCarpeta, 'portada-temporal'));
+        }
 
         for (let i = 0; i < seleccion.length; i++) {
           const pista = seleccion[i];
@@ -210,6 +241,7 @@ function registerCdIpc(getMainWindow) {
             titulo,
             artista: artistaPista,
             album: albumLimpio,
+            portada,
             totalPistas: disco.pistas.length,
             alProgreso: (fraccion) => {
               enviar('cd:progress', {
@@ -234,6 +266,15 @@ function registerCdIpc(getMainWindow) {
         }
       } finally {
         enCurso = null;
+        // La portada ya quedo incrustada en cada pista; el archivo suelto no
+        // hace falta y ademas el vigilante lo ignoraria igual.
+        if (portada) {
+          try {
+            await fsp.unlink(portada);
+          } catch (err) {
+            // Si no se puede borrar, no vale la pena interrumpir nada.
+          }
+        }
       }
     })();
 
