@@ -8,6 +8,7 @@ const registerDialogsIpc = require('./ipc/dialogs.ipc');
 const registerWindowIpc = require('./ipc/window.ipc');
 const registerLyricsIpc = require('./ipc/lyrics.ipc');
 const registerPlayerIpc = require('./ipc/player.ipc');
+const registerCdIpc = require('./ipc/cd.ipc');
 const settingsStore = require('./settingsStore');
 
 let mainWindow = null;
@@ -147,6 +148,7 @@ if (!gotSingleInstanceLock) {
     registerWindowIpc(() => mainWindow);
     registerLyricsIpc();
     const player = registerPlayerIpc(() => mainWindow);
+  const cd = registerCdIpc(() => mainWindow);
 
     createWindow();
     createTray();
@@ -162,7 +164,11 @@ if (!gotSingleInstanceLock) {
       const initialFiles = extractAudioFilesFromArgv(process.argv);
       if (initialFiles.length) mainWindow.webContents.send('player:openFiles', initialFiles);
     });
-    app.on('before-quit', () => library.stop());
+    app.on('before-quit', () => {
+      library.stop();
+      // Cortar una importacion en curso, o queda un .part a medio escribir.
+      cd.stop();
+    });
 
     app.on('activate', () => {
       if (BrowserWindow.getAllWindows().length === 0) createWindow();

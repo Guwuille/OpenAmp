@@ -48,6 +48,15 @@ contextBridge.exposeInMainWorld('api', {
     onCommand: (cb) => on('player:command', cb),
     onOpenFiles: (cb) => on('player:openFiles', cb)
   },
+  cd: {
+    list: () => ipcRenderer.invoke('cd:list'),
+    import: (options) => ipcRenderer.invoke('cd:import', options),
+    cancel: () => ipcRenderer.invoke('cd:cancel'),
+    onProgress: (cb) => on('cd:progress', cb),
+    onDone: (cb) => on('cd:done', cb),
+    onError: (cb) => on('cd:error', cb),
+    onCancelled: (cb) => on('cd:cancelled', cb)
+  },
   settings: {
     get: (key) => ipcRenderer.invoke('settings:get', key),
     set: (key, value) => ipcRenderer.invoke('settings:set', { key, value })

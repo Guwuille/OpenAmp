@@ -38,6 +38,29 @@
           <input id="library-search" type="text" placeholder="Buscar..." />
           <button id="btn-add-folder" title="Agregar carpeta">+ Carpeta</button>
           <button id="btn-open-files" title="Abrir archivos">Abrir</button>
+          <button id="btn-toggle-cd" title="Importar un CD de audio">CD</button>
+        </div>
+        <div id="library-cd" class="hidden">
+          <div id="cd-info"></div>
+          <div class="organize-row">
+            <label for="cd-artist">Artista</label>
+            <input id="cd-artist" type="text" maxlength="80" spellcheck="false" />
+          </div>
+          <div class="organize-row">
+            <label for="cd-album">Album</label>
+            <input id="cd-album" type="text" maxlength="80" spellcheck="false" />
+          </div>
+          <div class="organize-row">
+            <label for="cd-folder">Guardar en</label>
+            <select id="cd-folder" title="Carpeta de la biblioteca donde dejar el disco"></select>
+          </div>
+          <div class="organize-row">
+            <button id="btn-cd-refresh" title="Volver a mirar la lectora">Buscar disco</button>
+            <button id="btn-cd-import">Importar</button>
+            <button id="btn-cd-cancel" class="hidden">Cancelar</button>
+          </div>
+          <div id="cd-status"></div>
+          <div id="cd-bar"><div id="cd-bar-fill"></div></div>
         </div>
         <div id="library-organize">
           <div class="organize-row">

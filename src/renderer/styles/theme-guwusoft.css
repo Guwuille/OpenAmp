@@ -148,6 +148,7 @@ body::after {
 
 #library-toolbar button,
 #btn-library-sort-dir,
+#library-cd button,
 .panel-header button {
   padding: 3px 9px;
   border-radius: 3px;
@@ -170,6 +171,7 @@ body::after {
 
 #library-toolbar button:hover,
 #btn-library-sort-dir:hover,
+#library-cd button:hover,
 .panel-header button:hover {
   background: linear-gradient(180deg,
     rgba(255, 205, 100, .95) 0%,
@@ -180,6 +182,7 @@ body::after {
 
 #library-toolbar button:active,
 #btn-library-sort-dir:active,
+#library-cd button:active,
 .panel-header button:active {
   background: linear-gradient(180deg, rgba(140, 28, 0, .92) 0%, rgba(200, 68, 0, .92) 100%);
   box-shadow: inset 0 2px 5px rgba(0, 0, 0, .5);
@@ -187,6 +190,7 @@ body::after {
 
 .panel-header select,
 #library-organize select,
+#library-cd select,
 #playlist-rename-input,
 #library-search {
   background: rgba(0, 0, 0, .55);
@@ -200,6 +204,66 @@ body::after {
 #library-organize label {
   color: rgba(255, 180, 100, .7);
   letter-spacing: .3px;
+}
+
+/* ── Importar un CD ───────────────────────────────────────────────────── */
+
+#library-cd {
+  border-top: 1px solid rgba(255, 131, 0, .18);
+  padding-top: 6px;
+}
+
+#library-cd label {
+  color: rgba(255, 180, 100, .7);
+  letter-spacing: .3px;
+}
+
+#cd-artist,
+#cd-album {
+  background: rgba(0, 0, 0, .55);
+  color: var(--orange-lt);
+  border: 1px solid rgba(255, 131, 0, .4);
+  border-radius: 2px;
+  outline: none;
+}
+
+#cd-artist:focus,
+#cd-album:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 6px rgba(255, 131, 0, .35);
+}
+
+#cd-info {
+  color: var(--neon);
+  text-shadow: 0 0 5px rgba(170, 255, 0, .35);
+}
+
+#cd-info.vacio {
+  color: rgba(232, 223, 200, .45);
+  text-shadow: none;
+}
+
+#cd-status {
+  color: rgba(232, 223, 200, .6);
+}
+
+#cd-status.ok {
+  color: var(--neon);
+  text-shadow: 0 0 5px rgba(170, 255, 0, .4);
+}
+
+#cd-status.warn {
+  color: var(--gold);
+}
+
+#cd-bar {
+  background: rgba(0, 0, 0, .55);
+  border: 1px solid rgba(255, 131, 0, .3);
+  border-radius: 2px;
+}
+
+#cd-bar-fill {
+  background: linear-gradient(90deg, #ff8300, #ffcc00);
 }
 
 #btn-library-sort-dir.active {

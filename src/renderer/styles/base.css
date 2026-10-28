@@ -111,6 +111,62 @@ html, body {
   cursor: pointer;
 }
 
+/* ── Importar un CD ───────────────────────────────────────────────────── */
+
+#library-cd {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 6px 6px;
+  flex-shrink: 0;
+}
+
+#library-cd label {
+  flex-shrink: 0;
+  width: 44px;
+  font-size: 9px;
+  opacity: 0.7;
+}
+
+/* El * de arriba desactiva la seleccion en toda la app; en campos donde se
+   escribe y se corrige, hace falta. */
+#cd-artist,
+#cd-album {
+  flex: 1;
+  min-width: 0;
+  padding: 2px 4px;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+#cd-folder {
+  flex: 1;
+  min-width: 0;
+}
+
+#cd-info,
+#cd-status {
+  font-size: 9px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+#cd-status {
+  min-height: 12px;
+}
+
+#cd-bar {
+  height: 6px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+#cd-bar-fill {
+  width: 0;
+  height: 100%;
+  transition: width .2s;
+}
+
 #library-list {
   flex: 1;
   overflow-y: auto;
