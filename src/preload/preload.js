@@ -50,6 +50,7 @@ contextBridge.exposeInMainWorld('api', {
   },
   cd: {
     list: () => ipcRenderer.invoke('cd:list'),
+    lookup: (options) => ipcRenderer.invoke('cd:lookup', options),
     import: (options) => ipcRenderer.invoke('cd:import', options),
     cancel: () => ipcRenderer.invoke('cd:cancel'),
     onProgress: (cb) => on('cd:progress', cb),

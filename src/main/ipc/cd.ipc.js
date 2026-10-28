@@ -7,6 +7,8 @@ const { execFile } = require('node:child_process');
 const tracksRepo = require('../db/tracksRepo');
 const { listarDiscos } = require('../cd/cdrom');
 const { resolverFfmpeg } = require('../cd/ffmpegPath');
+const { calcularDiscId } = require('../cd/discid');
+const { buscarPorDiscId } = require('../cd/musicbrainz');
 
 // La lectora ignoro los valores intermedios en las pruebas, pero con 24 dio
 // 3.5x contra 2.7x por defecto. Pedir de mas no rompe: el firmware recorta.
@@ -52,11 +54,22 @@ function registerCdIpc(getMainWindow) {
     };
   });
 
+  ipcMain.handle('cd:lookup', async (event, { unidad } = {}) => {
+    const disco = listarDiscos().find((d) => d.unidad === unidad);
+    if (!disco) return { ok: false, error: 'No se encuentra el disco. Fijate que siga puesto.' };
+
+    const discId = calcularDiscId(
+      disco.pistas.map((p) => ({ numero: p.numero, inicio: p.inicioFrames, largo: p.largoFrames }))
+    );
+
+    return buscarPorDiscId(discId, disco.pistas);
+  });
+
   // Extrae una pista a FLAC. Se escribe con extension .part y se renombra al
   // terminar: el vigilante de carpetas ignora .part, asi que no intenta
   // indexar un archivo a medio escribir, y el rename final si dispara el
   // escaneo.
-  function extraerPista({ ffmpeg, unidad, pista, destino, artista, album, totalPistas, alProgreso }) {
+  function extraerPista({ ffmpeg, unidad, pista, destino, titulo, artista, album, totalPistas, alProgreso }) {
     return new Promise((resolve, reject) => {
       const parcial = `${destino}.part`;
 
@@ -75,7 +88,7 @@ function registerCdIpc(getMainWindow) {
         // archivo se escribe como .flac.part para que el vigilante de
         // carpetas no lo indexe a medio escribir.
         '-f', 'flac',
-        '-metadata', `title=Pista ${dosDigitos(pista.numero)}`,
+        '-metadata', `title=${titulo}`,
         '-metadata', `artist=${artista}`,
         '-metadata', `album=${album}`,
         '-metadata', `track=${pista.numero}/${totalPistas}`,
@@ -128,7 +141,7 @@ function registerCdIpc(getMainWindow) {
     });
   }
 
-  ipcMain.handle('cd:import', async (event, { unidad, folderId, artista, album, pistas } = {}) => {
+  ipcMain.handle('cd:import', async (event, { unidad, folderId, artista, album, pistas, titulos } = {}) => {
     if (enCurso) return { ok: false, error: 'Ya hay una importacion en curso.' };
 
     const ffmpeg = resolverFfmpeg();
@@ -145,6 +158,14 @@ function registerCdIpc(getMainWindow) {
 
     const artistaLimpio = nombreSeguro(artista, 'Artista desconocido');
     const albumLimpio = nombreSeguro(album, 'CD de audio');
+
+    // Titulos reales si hubo busqueda de metadatos; si no, nombres genericos.
+    const porNumero = new Map();
+    if (Array.isArray(titulos)) {
+      for (const entrada of titulos) {
+        if (entrada && entrada.numero) porNumero.set(entrada.numero, entrada);
+      }
+    }
 
     const seleccion = Array.isArray(pistas) && pistas.length > 0
       ? disco.pistas.filter((p) => pistas.includes(p.numero))
@@ -163,9 +184,14 @@ function registerCdIpc(getMainWindow) {
 
         for (let i = 0; i < seleccion.length; i++) {
           const pista = seleccion[i];
+          const datos = porNumero.get(pista.numero);
+          const titulo = (datos && datos.titulo) || `Pista ${dosDigitos(pista.numero)}`;
+          // Una recopilacion puede tener artista propio por pista.
+          const artistaPista = (datos && datos.artista) || artistaLimpio;
+
           const archivo = path.join(
             destinoCarpeta,
-            `${dosDigitos(pista.numero)} - Pista ${dosDigitos(pista.numero)}.flac`
+            `${dosDigitos(pista.numero)} - ${nombreSeguro(titulo, 'Pista ' + dosDigitos(pista.numero))}.flac`
           );
 
           enviar('cd:progress', {
@@ -181,7 +207,8 @@ function registerCdIpc(getMainWindow) {
             unidad: disco.unidad,
             pista,
             destino: archivo,
-            artista: artistaLimpio,
+            titulo,
+            artista: artistaPista,
             album: albumLimpio,
             totalPistas: disco.pistas.length,
             alProgreso: (fraccion) => {

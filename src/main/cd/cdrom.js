@@ -26,12 +26,18 @@ function leerStub(rutaArchivo) {
   if (datos.toString('ascii', 0, 4) !== 'RIFF') return null;
   if (datos.toString('ascii', 8, 12) !== 'CDDA') return null;
 
+  const inicioFrames = datos.readUInt32LE(OFFSET_INICIO);
   const largoFrames = datos.readUInt32LE(OFFSET_LARGO);
   return {
     numero: datos.readUInt16LE(OFFSET_PISTA),
     idDisco: datos.readUInt32LE(OFFSET_ID_DISCO),
-    inicio: datos.readUInt32LE(OFFSET_INICIO) / FRAMES_POR_SEGUNDO,
-    duracion: largoFrames / FRAMES_POR_SEGUNDO
+    // En segundos para la interfaz y para ffmpeg.
+    inicio: inicioFrames / FRAMES_POR_SEGUNDO,
+    duracion: largoFrames / FRAMES_POR_SEGUNDO,
+    // En frames para calcular el identificador de MusicBrainz, que no tolera
+    // redondeos: un frame de diferencia da otro hash y la consulta falla.
+    inicioFrames,
+    largoFrames
   };
 }
 

@@ -21,6 +21,8 @@ Ejecutar de todas formas*.
 
 ## Qué hace
 
+- **CD de audio**: importa un disco a FLAC con sus etiquetas, buscando artista,
+  álbum y títulos en MusicBrainz. Ver [Importar un CD de audio](#importar-un-cd-de-audio).
 - **Formatos**: FLAC, MP3, WAV, OGG, M4A y Opus. También video: MP4, M4V,
   WebM y OGV. Ver [Video](#video) para el detalle de códecs.
 - **Video**: si la pista trae imagen, se reproduce de fondo en el visualizador.
@@ -91,6 +93,38 @@ En modo visualizador aparecen tres interruptores arriba a la derecha:
 Las tres preferencias se recuerdan entre sesiones. Es el mismo elemento el que
 reproduce y el que muestra la imagen, así que no hay decodificación duplicada
 ni riesgo de que el sonido se desincronice de la imagen.
+
+## Importar un CD de audio
+
+El botón **CD** de la biblioteca importa un disco a FLAC, con sus etiquetas, en
+la carpeta que elijas. Como esa carpeta ya está vigilada, las pistas aparecen
+solas en la lista a medida que se escriben.
+
+El botón **Datos** busca artista, álbum y títulos en
+[MusicBrainz](https://musicbrainz.org). El identificador se calcula a partir
+del índice del disco, así que lo único que viaja es un hash de ese índice: no
+sale ningún dato del equipo. Si el disco no figura, podés escribir artista y
+álbum a mano y las pistas quedan como `Pista 01`, `Pista 02` y así.
+
+Con los títulos correctos, la búsqueda de letras funciona sola: ya tiene
+artista y título para consultar.
+
+Detalles de implementación que conviene saber:
+
+- Un CD de audio no es un sistema de archivos. Los `.cda` que muestra Windows
+  son cabeceras de 44 bytes sin audio, y Chromium no decodifica CD-DA, así que
+  las pistas se extraen con ffmpeg y su demuxer `libcdio`.
+- El índice sí sale de esos `.cda`: traen número de pista, inicio y largo. Se
+  lee en milisegundos, sin hacer girar el lector.
+- MusicBrainz espera los offsets con el pregap de 150 frames sumado, que no es
+  como los reporta Windows. Sin esa corrección la consulta devuelve 404.
+- La extracción va a unas 7× en un lector USB corriente: cerca de 20 segundos
+  por pista y unos 6 minutos un disco entero.
+
+**Hace falta ffmpeg** compilado con `libcdio`, que no viene con la app. En
+Windows: `winget install Gyan.FFmpeg`. Si falta, el panel lo avisa y explica
+cómo instalarlo. Se busca junto a la app, en `vendor/`, en los datos del
+usuario, en el `PATH` y en los paquetes de WinGet.
 
 ## Letras
 

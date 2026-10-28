@@ -256,6 +256,18 @@ body::after {
   color: var(--gold);
 }
 
+#cd-tracks {
+  background: rgba(0, 0, 0, .35);
+  border: 1px solid rgba(255, 131, 0, .2);
+  border-radius: 2px;
+  color: rgba(232, 223, 200, .75);
+}
+
+.cd-track .cd-track-num,
+.cd-track .cd-track-dur {
+  color: rgba(255, 180, 100, .6);
+}
+
 #cd-bar {
   background: rgba(0, 0, 0, .55);
   border: 1px solid rgba(255, 131, 0, .3);
